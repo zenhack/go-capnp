@@ -27,6 +27,11 @@ var (
 
 type Zdate struct{ capnp.Struct }
 
+type Zdate_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Zdate_TypeID is the unique identifier for the type Zdate.
 const Zdate_TypeID = 0xde50aebbad57549d
 
@@ -50,6 +55,16 @@ func (s Zdate) String() string {
 	return str
 }
 
+func (s Zdate) Builder_() Zdate_B_ {
+	return Zdate_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Zdate_B_) Reader_() (Zdate, error) {
+	return Zdate{Struct: s.Struct}, *s.Err
+}
 func (s Zdate) Year() int16 {
 	return int16(s.Struct.Uint16(0))
 }
@@ -58,6 +73,12 @@ func (s Zdate) SetYear(v int16) {
 	s.Struct.SetUint16(0, uint16(v))
 }
 
+func (s Zdate_B_) Year(v int16) Zdate_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
+}
 func (s Zdate) Month() uint8 {
 	return s.Struct.Uint8(2)
 }
@@ -66,12 +87,25 @@ func (s Zdate) SetMonth(v uint8) {
 	s.Struct.SetUint8(2, v)
 }
 
+func (s Zdate_B_) Month(v uint8) Zdate_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint8(2, v)
+	}
+	return s
+}
 func (s Zdate) Day() uint8 {
 	return s.Struct.Uint8(3)
 }
 
 func (s Zdate) SetDay(v uint8) {
 	s.Struct.SetUint8(3, v)
+}
+
+func (s Zdate_B_) Day(v uint8) Zdate_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint8(3, v)
+	}
+	return s
 }
 
 // Zdate_List is a list of Zdate.
@@ -97,6 +131,11 @@ func (p Zdate_Promise) Struct() (Zdate, error) {
 
 type Zdata struct{ capnp.Struct }
 
+type Zdata_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Zdata_TypeID is the unique identifier for the type Zdata.
 const Zdata_TypeID = 0xc7da65f9a2f20ba2
 
@@ -120,6 +159,16 @@ func (s Zdata) String() string {
 	return str
 }
 
+func (s Zdata) Builder_() Zdata_B_ {
+	return Zdata_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Zdata_B_) Reader_() (Zdata, error) {
+	return Zdata{Struct: s.Struct}, *s.Err
+}
 func (s Zdata) Data() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
@@ -132,6 +181,13 @@ func (s Zdata) HasData() bool {
 
 func (s Zdata) SetData(v []byte) error {
 	return s.Struct.SetData(0, v)
+}
+
+func (s Zdata_B_) Data(v []byte) Zdata_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetData(0, v)
+	}
+	return s
 }
 
 // Zdata_List is a list of Zdata.
@@ -237,6 +293,11 @@ func (l Airport_List) Set(i int, v Airport) {
 
 type PlaneBase struct{ capnp.Struct }
 
+type PlaneBase_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // PlaneBase_TypeID is the unique identifier for the type PlaneBase.
 const PlaneBase_TypeID = 0xd8bccf6e60a73791
 
@@ -260,6 +321,16 @@ func (s PlaneBase) String() string {
 	return str
 }
 
+func (s PlaneBase) Builder_() PlaneBase_B_ {
+	return PlaneBase_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s PlaneBase_B_) Reader_() (PlaneBase, error) {
+	return PlaneBase{Struct: s.Struct}, *s.Err
+}
 func (s PlaneBase) Name() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -279,6 +350,12 @@ func (s PlaneBase) SetName(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s PlaneBase_B_) Name(v string) PlaneBase_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s PlaneBase) Homes() (Airport_List, error) {
 	p, err := s.Struct.Ptr(1)
 	return Airport_List{List: p.List()}, err
@@ -312,6 +389,12 @@ func (s PlaneBase) SetRating(v int64) {
 	s.Struct.SetUint64(0, uint64(v))
 }
 
+func (s PlaneBase_B_) Rating(v int64) PlaneBase_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(0, uint64(v))
+	}
+	return s
+}
 func (s PlaneBase) CanFly() bool {
 	return s.Struct.Bit(64)
 }
@@ -320,6 +403,12 @@ func (s PlaneBase) SetCanFly(v bool) {
 	s.Struct.SetBit(64, v)
 }
 
+func (s PlaneBase_B_) CanFly(v bool) PlaneBase_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(64, v)
+	}
+	return s
+}
 func (s PlaneBase) Capacity() int64 {
 	return int64(s.Struct.Uint64(16))
 }
@@ -328,12 +417,25 @@ func (s PlaneBase) SetCapacity(v int64) {
 	s.Struct.SetUint64(16, uint64(v))
 }
 
+func (s PlaneBase_B_) Capacity(v int64) PlaneBase_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(16, uint64(v))
+	}
+	return s
+}
 func (s PlaneBase) MaxSpeed() float64 {
 	return math.Float64frombits(s.Struct.Uint64(24))
 }
 
 func (s PlaneBase) SetMaxSpeed(v float64) {
 	s.Struct.SetUint64(24, math.Float64bits(v))
+}
+
+func (s PlaneBase_B_) MaxSpeed(v float64) PlaneBase_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint64(24, math.Float64bits(v))
+	}
+	return s
 }
 
 // PlaneBase_List is a list of PlaneBase.
@@ -359,6 +461,11 @@ func (p PlaneBase_Promise) Struct() (PlaneBase, error) {
 
 type B737 struct{ capnp.Struct }
 
+type B737_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // B737_TypeID is the unique identifier for the type B737.
 const B737_TypeID = 0xccb3b2e3603826e0
 
@@ -382,6 +489,16 @@ func (s B737) String() string {
 	return str
 }
 
+func (s B737) Builder_() B737_B_ {
+	return B737_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s B737_B_) Reader_() (B737, error) {
+	return B737{Struct: s.Struct}, *s.Err
+}
 func (s B737) Base() (PlaneBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return PlaneBase{Struct: p.Struct()}, err
@@ -405,6 +522,29 @@ func (s B737) NewBase() (PlaneBase, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s B737_B_) Base(v PlaneBase) B737_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s B737_B_) NewBase() PlaneBase_B_ {
+	if s.Err != nil {
+		return PlaneBase_B_{Err: s.Err}
+	}
+	ss, err := NewPlaneBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PlaneBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PlaneBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // B737_List is a list of B737.
@@ -434,6 +574,11 @@ func (p B737_Promise) Base() PlaneBase_Promise {
 
 type A320 struct{ capnp.Struct }
 
+type A320_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // A320_TypeID is the unique identifier for the type A320.
 const A320_TypeID = 0xd98c608877d9cb8d
 
@@ -457,6 +602,16 @@ func (s A320) String() string {
 	return str
 }
 
+func (s A320) Builder_() A320_B_ {
+	return A320_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s A320_B_) Reader_() (A320, error) {
+	return A320{Struct: s.Struct}, *s.Err
+}
 func (s A320) Base() (PlaneBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return PlaneBase{Struct: p.Struct()}, err
@@ -480,6 +635,29 @@ func (s A320) NewBase() (PlaneBase, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s A320_B_) Base(v PlaneBase) A320_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s A320_B_) NewBase() PlaneBase_B_ {
+	if s.Err != nil {
+		return PlaneBase_B_{Err: s.Err}
+	}
+	ss, err := NewPlaneBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PlaneBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PlaneBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // A320_List is a list of A320.
@@ -509,6 +687,11 @@ func (p A320_Promise) Base() PlaneBase_Promise {
 
 type F16 struct{ capnp.Struct }
 
+type F16_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // F16_TypeID is the unique identifier for the type F16.
 const F16_TypeID = 0xe1c9eac512335361
 
@@ -532,6 +715,16 @@ func (s F16) String() string {
 	return str
 }
 
+func (s F16) Builder_() F16_B_ {
+	return F16_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s F16_B_) Reader_() (F16, error) {
+	return F16{Struct: s.Struct}, *s.Err
+}
 func (s F16) Base() (PlaneBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return PlaneBase{Struct: p.Struct()}, err
@@ -555,6 +748,29 @@ func (s F16) NewBase() (PlaneBase, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s F16_B_) Base(v PlaneBase) F16_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s F16_B_) NewBase() PlaneBase_B_ {
+	if s.Err != nil {
+		return PlaneBase_B_{Err: s.Err}
+	}
+	ss, err := NewPlaneBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PlaneBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PlaneBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // F16_List is a list of F16.
@@ -584,6 +800,11 @@ func (p F16_Promise) Base() PlaneBase_Promise {
 
 type Regression struct{ capnp.Struct }
 
+type Regression_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Regression_TypeID is the unique identifier for the type Regression.
 const Regression_TypeID = 0xb1f0385d845e367f
 
@@ -607,6 +828,16 @@ func (s Regression) String() string {
 	return str
 }
 
+func (s Regression) Builder_() Regression_B_ {
+	return Regression_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Regression_B_) Reader_() (Regression, error) {
+	return Regression{Struct: s.Struct}, *s.Err
+}
 func (s Regression) Base() (PlaneBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return PlaneBase{Struct: p.Struct()}, err
@@ -632,6 +863,28 @@ func (s Regression) NewBase() (PlaneBase, error) {
 	return ss, err
 }
 
+func (s Regression_B_) Base(v PlaneBase) Regression_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Regression_B_) NewBase() PlaneBase_B_ {
+	if s.Err != nil {
+		return PlaneBase_B_{Err: s.Err}
+	}
+	ss, err := NewPlaneBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PlaneBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PlaneBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Regression) B0() float64 {
 	return math.Float64frombits(s.Struct.Uint64(0))
 }
@@ -640,6 +893,12 @@ func (s Regression) SetB0(v float64) {
 	s.Struct.SetUint64(0, math.Float64bits(v))
 }
 
+func (s Regression_B_) B0(v float64) Regression_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint64(0, math.Float64bits(v))
+	}
+	return s
+}
 func (s Regression) Beta() (capnp.Float64List, error) {
 	p, err := s.Struct.Ptr(1)
 	return capnp.Float64List{List: p.List()}, err
@@ -698,12 +957,25 @@ func (s Regression) SetYmu(v float64) {
 	s.Struct.SetUint64(8, math.Float64bits(v))
 }
 
+func (s Regression_B_) Ymu(v float64) Regression_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint64(8, math.Float64bits(v))
+	}
+	return s
+}
 func (s Regression) Ysd() float64 {
 	return math.Float64frombits(s.Struct.Uint64(16))
 }
 
 func (s Regression) SetYsd(v float64) {
 	s.Struct.SetUint64(16, math.Float64bits(v))
+}
+
+func (s Regression_B_) Ysd(v float64) Regression_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint64(16, math.Float64bits(v))
+	}
+	return s
 }
 
 // Regression_List is a list of Regression.
@@ -732,6 +1004,11 @@ func (p Regression_Promise) Base() PlaneBase_Promise {
 }
 
 type Aircraft struct{ capnp.Struct }
+
+type Aircraft_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Aircraft_Which uint16
 
 const (
@@ -780,6 +1057,17 @@ func (s Aircraft) String() string {
 	return str
 }
 
+func (s Aircraft) Builder_() Aircraft_B_ {
+	return Aircraft_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Aircraft_B_) Reader_() (Aircraft, error) {
+	return Aircraft{Struct: s.Struct}, *s.Err
+}
+
 func (s Aircraft) Which() Aircraft_Which {
 	return Aircraft_Which(s.Struct.Uint16(0))
 }
@@ -818,6 +1106,29 @@ func (s Aircraft) NewB737() (B737, error) {
 	return ss, err
 }
 
+func (s Aircraft_B_) B737(v B737) Aircraft_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Aircraft_B_) NewB737() B737_B_ {
+	if s.Err != nil {
+		return B737_B_{Err: s.Err}
+	}
+	ss, err := NewB737(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return B737_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return B737_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Aircraft) A320() (A320, error) {
 	p, err := s.Struct.Ptr(0)
 	return A320{Struct: p.Struct()}, err
@@ -848,6 +1159,29 @@ func (s Aircraft) NewA320() (A320, error) {
 	return ss, err
 }
 
+func (s Aircraft_B_) A320(v A320) Aircraft_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 2)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Aircraft_B_) NewA320() A320_B_ {
+	if s.Err != nil {
+		return A320_B_{Err: s.Err}
+	}
+	ss, err := NewA320(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return A320_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return A320_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Aircraft) F16() (F16, error) {
 	p, err := s.Struct.Ptr(0)
 	return F16{Struct: p.Struct()}, err
@@ -876,6 +1210,30 @@ func (s Aircraft) NewF16() (F16, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Aircraft_B_) F16(v F16) Aircraft_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 3)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Aircraft_B_) NewF16() F16_B_ {
+	if s.Err != nil {
+		return F16_B_{Err: s.Err}
+	}
+	ss, err := NewF16(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return F16_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return F16_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Aircraft_List is a list of Aircraft.
@@ -912,7 +1270,14 @@ func (p Aircraft_Promise) F16() F16_Promise {
 }
 
 type Z struct{ capnp.Struct }
+
+type Z_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Z_grp Z
+
+type Z_grp_B_ Z_B_
 type Z_Which uint16
 
 const (
@@ -1084,6 +1449,17 @@ func (s Z) String() string {
 	return str
 }
 
+func (s Z) Builder_() Z_B_ {
+	return Z_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Z_B_) Reader_() (Z, error) {
+	return Z{Struct: s.Struct}, *s.Err
+}
+
 func (s Z) Which() Z_Which {
 	return Z_Which(s.Struct.Uint16(0))
 }
@@ -1122,6 +1498,29 @@ func (s Z) NewZz() (Z, error) {
 	return ss, err
 }
 
+func (s Z_B_) Zz(v Z) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewZz() Z_B_ {
+	if s.Err != nil {
+		return Z_B_{Err: s.Err}
+	}
+	ss, err := NewZ(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Z_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Z_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) F64() float64 {
 	return math.Float64frombits(s.Struct.Uint64(8))
 }
@@ -1131,6 +1530,13 @@ func (s Z) SetF64(v float64) {
 	s.Struct.SetUint64(8, math.Float64bits(v))
 }
 
+func (s Z_B_) F64(v float64) Z_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint16(0, 2)
+		s.Struct.SetUint64(8, math.Float64bits(v))
+	}
+	return s
+}
 func (s Z) F32() float32 {
 	return math.Float32frombits(s.Struct.Uint32(8))
 }
@@ -1140,6 +1546,13 @@ func (s Z) SetF32(v float32) {
 	s.Struct.SetUint32(8, math.Float32bits(v))
 }
 
+func (s Z_B_) F32(v float32) Z_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint16(0, 3)
+		s.Struct.SetUint32(8, math.Float32bits(v))
+	}
+	return s
+}
 func (s Z) I64() int64 {
 	return int64(s.Struct.Uint64(8))
 }
@@ -1149,6 +1562,13 @@ func (s Z) SetI64(v int64) {
 	s.Struct.SetUint64(8, uint64(v))
 }
 
+func (s Z_B_) I64(v int64) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 4)
+		s.Struct.SetUint64(8, uint64(v))
+	}
+	return s
+}
 func (s Z) I32() int32 {
 	return int32(s.Struct.Uint32(8))
 }
@@ -1158,6 +1578,13 @@ func (s Z) SetI32(v int32) {
 	s.Struct.SetUint32(8, uint32(v))
 }
 
+func (s Z_B_) I32(v int32) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 5)
+		s.Struct.SetUint32(8, uint32(v))
+	}
+	return s
+}
 func (s Z) I16() int16 {
 	return int16(s.Struct.Uint16(8))
 }
@@ -1167,6 +1594,13 @@ func (s Z) SetI16(v int16) {
 	s.Struct.SetUint16(8, uint16(v))
 }
 
+func (s Z_B_) I16(v int16) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 6)
+		s.Struct.SetUint16(8, uint16(v))
+	}
+	return s
+}
 func (s Z) I8() int8 {
 	return int8(s.Struct.Uint8(8))
 }
@@ -1176,6 +1610,13 @@ func (s Z) SetI8(v int8) {
 	s.Struct.SetUint8(8, uint8(v))
 }
 
+func (s Z_B_) I8(v int8) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 7)
+		s.Struct.SetUint8(8, uint8(v))
+	}
+	return s
+}
 func (s Z) U64() uint64 {
 	return s.Struct.Uint64(8)
 }
@@ -1185,6 +1626,13 @@ func (s Z) SetU64(v uint64) {
 	s.Struct.SetUint64(8, v)
 }
 
+func (s Z_B_) U64(v uint64) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 8)
+		s.Struct.SetUint64(8, v)
+	}
+	return s
+}
 func (s Z) U32() uint32 {
 	return s.Struct.Uint32(8)
 }
@@ -1194,6 +1642,13 @@ func (s Z) SetU32(v uint32) {
 	s.Struct.SetUint32(8, v)
 }
 
+func (s Z_B_) U32(v uint32) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 9)
+		s.Struct.SetUint32(8, v)
+	}
+	return s
+}
 func (s Z) U16() uint16 {
 	return s.Struct.Uint16(8)
 }
@@ -1203,6 +1658,13 @@ func (s Z) SetU16(v uint16) {
 	s.Struct.SetUint16(8, v)
 }
 
+func (s Z_B_) U16(v uint16) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 10)
+		s.Struct.SetUint16(8, v)
+	}
+	return s
+}
 func (s Z) U8() uint8 {
 	return s.Struct.Uint8(8)
 }
@@ -1212,6 +1674,13 @@ func (s Z) SetU8(v uint8) {
 	s.Struct.SetUint8(8, v)
 }
 
+func (s Z_B_) U8(v uint8) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 11)
+		s.Struct.SetUint8(8, v)
+	}
+	return s
+}
 func (s Z) Bool() bool {
 	return s.Struct.Bit(64)
 }
@@ -1221,6 +1690,13 @@ func (s Z) SetBool(v bool) {
 	s.Struct.SetBit(64, v)
 }
 
+func (s Z_B_) Bool(v bool) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 12)
+		s.Struct.SetBit(64, v)
+	}
+	return s
+}
 func (s Z) Text() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -1244,6 +1720,13 @@ func (s Z) SetText(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s Z_B_) Text(v string) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 13)
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s Z) Blob() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
@@ -1262,6 +1745,13 @@ func (s Z) SetBlob(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
+func (s Z_B_) Blob(v []byte) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 14)
+		*s.Err = s.Struct.SetData(0, v)
+	}
+	return s
+}
 func (s Z) F64vec() (capnp.Float64List, error) {
 	p, err := s.Struct.Ptr(0)
 	return capnp.Float64List{List: p.List()}, err
@@ -1742,6 +2232,29 @@ func (s Z) NewZdate() (Zdate, error) {
 	return ss, err
 }
 
+func (s Z_B_) Zdate(v Zdate) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 27)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewZdate() Zdate_B_ {
+	if s.Err != nil {
+		return Zdate_B_{Err: s.Err}
+	}
+	ss, err := NewZdate(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Zdate_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Zdate_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Zdata() (Zdata, error) {
 	p, err := s.Struct.Ptr(0)
 	return Zdata{Struct: p.Struct()}, err
@@ -1772,6 +2285,29 @@ func (s Z) NewZdata() (Zdata, error) {
 	return ss, err
 }
 
+func (s Z_B_) Zdata(v Zdata) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 28)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewZdata() Zdata_B_ {
+	if s.Err != nil {
+		return Zdata_B_{Err: s.Err}
+	}
+	ss, err := NewZdata(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Zdata_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Zdata_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Aircraftvec() (Aircraft_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return Aircraft_List{List: p.List()}, err
@@ -1832,6 +2368,29 @@ func (s Z) NewAircraft() (Aircraft, error) {
 	return ss, err
 }
 
+func (s Z_B_) Aircraft(v Aircraft) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 30)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewAircraft() Aircraft_B_ {
+	if s.Err != nil {
+		return Aircraft_B_{Err: s.Err}
+	}
+	ss, err := NewAircraft(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Aircraft_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Aircraft_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Regression() (Regression, error) {
 	p, err := s.Struct.Ptr(0)
 	return Regression{Struct: p.Struct()}, err
@@ -1862,6 +2421,29 @@ func (s Z) NewRegression() (Regression, error) {
 	return ss, err
 }
 
+func (s Z_B_) Regression(v Regression) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 31)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewRegression() Regression_B_ {
+	if s.Err != nil {
+		return Regression_B_{Err: s.Err}
+	}
+	ss, err := NewRegression(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Regression_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Regression_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Planebase() (PlaneBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return PlaneBase{Struct: p.Struct()}, err
@@ -1892,6 +2474,29 @@ func (s Z) NewPlanebase() (PlaneBase, error) {
 	return ss, err
 }
 
+func (s Z_B_) Planebase(v PlaneBase) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 32)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewPlanebase() PlaneBase_B_ {
+	if s.Err != nil {
+		return PlaneBase_B_{Err: s.Err}
+	}
+	ss, err := NewPlaneBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PlaneBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PlaneBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Airport() Airport {
 	return Airport(s.Struct.Uint16(8))
 }
@@ -1901,6 +2506,13 @@ func (s Z) SetAirport(v Airport) {
 	s.Struct.SetUint16(8, uint16(v))
 }
 
+func (s Z_B_) Airport(v Airport) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 33)
+		s.Struct.SetUint16(8, uint16(v))
+	}
+	return s
+}
 func (s Z) B737() (B737, error) {
 	p, err := s.Struct.Ptr(0)
 	return B737{Struct: p.Struct()}, err
@@ -1931,6 +2543,29 @@ func (s Z) NewB737() (B737, error) {
 	return ss, err
 }
 
+func (s Z_B_) B737(v B737) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 34)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewB737() B737_B_ {
+	if s.Err != nil {
+		return B737_B_{Err: s.Err}
+	}
+	ss, err := NewB737(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return B737_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return B737_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) A320() (A320, error) {
 	p, err := s.Struct.Ptr(0)
 	return A320{Struct: p.Struct()}, err
@@ -1961,6 +2596,29 @@ func (s Z) NewA320() (A320, error) {
 	return ss, err
 }
 
+func (s Z_B_) A320(v A320) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 35)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewA320() A320_B_ {
+	if s.Err != nil {
+		return A320_B_{Err: s.Err}
+	}
+	ss, err := NewA320(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return A320_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return A320_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) F16() (F16, error) {
 	p, err := s.Struct.Ptr(0)
 	return F16{Struct: p.Struct()}, err
@@ -1991,6 +2649,29 @@ func (s Z) NewF16() (F16, error) {
 	return ss, err
 }
 
+func (s Z_B_) F16(v F16) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 36)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewF16() F16_B_ {
+	if s.Err != nil {
+		return F16_B_{Err: s.Err}
+	}
+	ss, err := NewF16(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return F16_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return F16_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Z) Zdatevec() (Zdate_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return Zdate_List{List: p.List()}, err
@@ -2065,6 +2746,12 @@ func (s Z_grp) SetFirst(v uint64) {
 	s.Struct.SetUint64(8, v)
 }
 
+func (s Z_grp_B_) First(v uint64) Z_grp_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(8, v)
+	}
+	return s
+}
 func (s Z_grp) Second() uint64 {
 	return s.Struct.Uint64(16)
 }
@@ -2073,6 +2760,12 @@ func (s Z_grp) SetSecond(v uint64) {
 	s.Struct.SetUint64(16, v)
 }
 
+func (s Z_grp_B_) Second(v uint64) Z_grp_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(16, v)
+	}
+	return s
+}
 func (s Z) Echo() Echo {
 	p, _ := s.Struct.Ptr(0)
 	return Echo{Client: p.Interface().Client()}
@@ -2124,6 +2817,30 @@ func (s Z) NewEchoBases() (EchoBases, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Z_B_) EchoBases(v EchoBases) Z_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 44)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Z_B_) NewEchoBases() EchoBases_B_ {
+	if s.Err != nil {
+		return EchoBases_B_{Err: s.Err}
+	}
+	ss, err := NewEchoBases(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return EchoBases_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return EchoBases_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Z_List is a list of Z.
@@ -2203,6 +2920,11 @@ func (p Z_Promise) EchoBases() EchoBases_Promise {
 
 type Counter struct{ capnp.Struct }
 
+type Counter_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Counter_TypeID is the unique identifier for the type Counter.
 const Counter_TypeID = 0x8748bc095e10cb5d
 
@@ -2226,6 +2948,16 @@ func (s Counter) String() string {
 	return str
 }
 
+func (s Counter) Builder_() Counter_B_ {
+	return Counter_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Counter_B_) Reader_() (Counter, error) {
+	return Counter{Struct: s.Struct}, *s.Err
+}
 func (s Counter) Size() int64 {
 	return int64(s.Struct.Uint64(0))
 }
@@ -2234,6 +2966,12 @@ func (s Counter) SetSize(v int64) {
 	s.Struct.SetUint64(0, uint64(v))
 }
 
+func (s Counter_B_) Size(v int64) Counter_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(0, uint64(v))
+	}
+	return s
+}
 func (s Counter) Words() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -2253,6 +2991,12 @@ func (s Counter) SetWords(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s Counter_B_) Words(v string) Counter_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s Counter) Wordlist() (capnp.TextList, error) {
 	p, err := s.Struct.Ptr(1)
 	return capnp.TextList{List: p.List()}, err
@@ -2301,6 +3045,11 @@ func (p Counter_Promise) Struct() (Counter, error) {
 
 type Bag struct{ capnp.Struct }
 
+type Bag_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Bag_TypeID is the unique identifier for the type Bag.
 const Bag_TypeID = 0xd636fba4f188dabe
 
@@ -2324,6 +3073,16 @@ func (s Bag) String() string {
 	return str
 }
 
+func (s Bag) Builder_() Bag_B_ {
+	return Bag_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Bag_B_) Reader_() (Bag, error) {
+	return Bag{Struct: s.Struct}, *s.Err
+}
 func (s Bag) Counter() (Counter, error) {
 	p, err := s.Struct.Ptr(0)
 	return Counter{Struct: p.Struct()}, err
@@ -2347,6 +3106,29 @@ func (s Bag) NewCounter() (Counter, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Bag_B_) Counter(v Counter) Bag_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Bag_B_) NewCounter() Counter_B_ {
+	if s.Err != nil {
+		return Counter_B_{Err: s.Err}
+	}
+	ss, err := NewCounter(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Counter_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Counter_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Bag_List is a list of Bag.
@@ -2376,6 +3158,11 @@ func (p Bag_Promise) Counter() Counter_Promise {
 
 type Zserver struct{ capnp.Struct }
 
+type Zserver_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Zserver_TypeID is the unique identifier for the type Zserver.
 const Zserver_TypeID = 0xcc4411e60ba9c498
 
@@ -2399,6 +3186,16 @@ func (s Zserver) String() string {
 	return str
 }
 
+func (s Zserver) Builder_() Zserver_B_ {
+	return Zserver_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Zserver_B_) Reader_() (Zserver, error) {
+	return Zserver{Struct: s.Struct}, *s.Err
+}
 func (s Zserver) Waitingjobs() (Zjob_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return Zjob_List{List: p.List()}, err
@@ -2447,6 +3244,11 @@ func (p Zserver_Promise) Struct() (Zserver, error) {
 
 type Zjob struct{ capnp.Struct }
 
+type Zjob_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Zjob_TypeID is the unique identifier for the type Zjob.
 const Zjob_TypeID = 0xddd1416669fb7613
 
@@ -2470,6 +3272,16 @@ func (s Zjob) String() string {
 	return str
 }
 
+func (s Zjob) Builder_() Zjob_B_ {
+	return Zjob_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Zjob_B_) Reader_() (Zjob, error) {
+	return Zjob{Struct: s.Struct}, *s.Err
+}
 func (s Zjob) Cmd() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -2489,6 +3301,12 @@ func (s Zjob) SetCmd(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s Zjob_B_) Cmd(v string) Zjob_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s Zjob) Args() (capnp.TextList, error) {
 	p, err := s.Struct.Ptr(1)
 	return capnp.TextList{List: p.List()}, err
@@ -2537,6 +3355,11 @@ func (p Zjob_Promise) Struct() (Zjob, error) {
 
 type VerEmpty struct{ capnp.Struct }
 
+type VerEmpty_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerEmpty_TypeID is the unique identifier for the type VerEmpty.
 const VerEmpty_TypeID = 0x93c99951eacc72ff
 
@@ -2558,6 +3381,17 @@ func ReadRootVerEmpty(msg *capnp.Message) (VerEmpty, error) {
 func (s VerEmpty) String() string {
 	str, _ := text.Marshal(0x93c99951eacc72ff, s.Struct)
 	return str
+}
+
+func (s VerEmpty) Builder_() VerEmpty_B_ {
+	return VerEmpty_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerEmpty_B_) Reader_() (VerEmpty, error) {
+	return VerEmpty{Struct: s.Struct}, *s.Err
 }
 
 // VerEmpty_List is a list of VerEmpty.
@@ -2583,6 +3417,11 @@ func (p VerEmpty_Promise) Struct() (VerEmpty, error) {
 
 type VerOneData struct{ capnp.Struct }
 
+type VerOneData_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerOneData_TypeID is the unique identifier for the type VerOneData.
 const VerOneData_TypeID = 0xfca3742893be4cde
 
@@ -2606,12 +3445,29 @@ func (s VerOneData) String() string {
 	return str
 }
 
+func (s VerOneData) Builder_() VerOneData_B_ {
+	return VerOneData_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerOneData_B_) Reader_() (VerOneData, error) {
+	return VerOneData{Struct: s.Struct}, *s.Err
+}
 func (s VerOneData) Val() int16 {
 	return int16(s.Struct.Uint16(0))
 }
 
 func (s VerOneData) SetVal(v int16) {
 	s.Struct.SetUint16(0, uint16(v))
+}
+
+func (s VerOneData_B_) Val(v int16) VerOneData_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
 }
 
 // VerOneData_List is a list of VerOneData.
@@ -2637,6 +3493,11 @@ func (p VerOneData_Promise) Struct() (VerOneData, error) {
 
 type VerTwoData struct{ capnp.Struct }
 
+type VerTwoData_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerTwoData_TypeID is the unique identifier for the type VerTwoData.
 const VerTwoData_TypeID = 0xf705dc45c94766fd
 
@@ -2660,6 +3521,16 @@ func (s VerTwoData) String() string {
 	return str
 }
 
+func (s VerTwoData) Builder_() VerTwoData_B_ {
+	return VerTwoData_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerTwoData_B_) Reader_() (VerTwoData, error) {
+	return VerTwoData{Struct: s.Struct}, *s.Err
+}
 func (s VerTwoData) Val() int16 {
 	return int16(s.Struct.Uint16(0))
 }
@@ -2668,12 +3539,25 @@ func (s VerTwoData) SetVal(v int16) {
 	s.Struct.SetUint16(0, uint16(v))
 }
 
+func (s VerTwoData_B_) Val(v int16) VerTwoData_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
+}
 func (s VerTwoData) Duo() int64 {
 	return int64(s.Struct.Uint64(8))
 }
 
 func (s VerTwoData) SetDuo(v int64) {
 	s.Struct.SetUint64(8, uint64(v))
+}
+
+func (s VerTwoData_B_) Duo(v int64) VerTwoData_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(8, uint64(v))
+	}
+	return s
 }
 
 // VerTwoData_List is a list of VerTwoData.
@@ -2699,6 +3583,11 @@ func (p VerTwoData_Promise) Struct() (VerTwoData, error) {
 
 type VerOnePtr struct{ capnp.Struct }
 
+type VerOnePtr_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerOnePtr_TypeID is the unique identifier for the type VerOnePtr.
 const VerOnePtr_TypeID = 0x94bf7df83408218d
 
@@ -2722,6 +3611,16 @@ func (s VerOnePtr) String() string {
 	return str
 }
 
+func (s VerOnePtr) Builder_() VerOnePtr_B_ {
+	return VerOnePtr_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerOnePtr_B_) Reader_() (VerOnePtr, error) {
+	return VerOnePtr{Struct: s.Struct}, *s.Err
+}
 func (s VerOnePtr) Ptr() (VerOneData, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerOneData{Struct: p.Struct()}, err
@@ -2745,6 +3644,29 @@ func (s VerOnePtr) NewPtr() (VerOneData, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s VerOnePtr_B_) Ptr(v VerOneData) VerOnePtr_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerOnePtr_B_) NewPtr() VerOneData_B_ {
+	if s.Err != nil {
+		return VerOneData_B_{Err: s.Err}
+	}
+	ss, err := NewVerOneData(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerOneData_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerOneData_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // VerOnePtr_List is a list of VerOnePtr.
@@ -2774,6 +3696,11 @@ func (p VerOnePtr_Promise) Ptr() VerOneData_Promise {
 
 type VerTwoPtr struct{ capnp.Struct }
 
+type VerTwoPtr_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerTwoPtr_TypeID is the unique identifier for the type VerTwoPtr.
 const VerTwoPtr_TypeID = 0xc95babe3bd394d2d
 
@@ -2797,6 +3724,16 @@ func (s VerTwoPtr) String() string {
 	return str
 }
 
+func (s VerTwoPtr) Builder_() VerTwoPtr_B_ {
+	return VerTwoPtr_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerTwoPtr_B_) Reader_() (VerTwoPtr, error) {
+	return VerTwoPtr{Struct: s.Struct}, *s.Err
+}
 func (s VerTwoPtr) Ptr1() (VerOneData, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerOneData{Struct: p.Struct()}, err
@@ -2822,6 +3759,28 @@ func (s VerTwoPtr) NewPtr1() (VerOneData, error) {
 	return ss, err
 }
 
+func (s VerTwoPtr_B_) Ptr1(v VerOneData) VerTwoPtr_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoPtr_B_) NewPtr1() VerOneData_B_ {
+	if s.Err != nil {
+		return VerOneData_B_{Err: s.Err}
+	}
+	ss, err := NewVerOneData(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerOneData_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerOneData_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s VerTwoPtr) Ptr2() (VerOneData, error) {
 	p, err := s.Struct.Ptr(1)
 	return VerOneData{Struct: p.Struct()}, err
@@ -2845,6 +3804,29 @@ func (s VerTwoPtr) NewPtr2() (VerOneData, error) {
 	}
 	err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s VerTwoPtr_B_) Ptr2(v VerOneData) VerTwoPtr_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoPtr_B_) NewPtr2() VerOneData_B_ {
+	if s.Err != nil {
+		return VerOneData_B_{Err: s.Err}
+	}
+	ss, err := NewVerOneData(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerOneData_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return VerOneData_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // VerTwoPtr_List is a list of VerTwoPtr.
@@ -2878,6 +3860,11 @@ func (p VerTwoPtr_Promise) Ptr2() VerOneData_Promise {
 
 type VerTwoDataTwoPtr struct{ capnp.Struct }
 
+type VerTwoDataTwoPtr_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerTwoDataTwoPtr_TypeID is the unique identifier for the type VerTwoDataTwoPtr.
 const VerTwoDataTwoPtr_TypeID = 0xb61ee2ecff34ca73
 
@@ -2901,6 +3888,16 @@ func (s VerTwoDataTwoPtr) String() string {
 	return str
 }
 
+func (s VerTwoDataTwoPtr) Builder_() VerTwoDataTwoPtr_B_ {
+	return VerTwoDataTwoPtr_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerTwoDataTwoPtr_B_) Reader_() (VerTwoDataTwoPtr, error) {
+	return VerTwoDataTwoPtr{Struct: s.Struct}, *s.Err
+}
 func (s VerTwoDataTwoPtr) Val() int16 {
 	return int16(s.Struct.Uint16(0))
 }
@@ -2909,6 +3906,12 @@ func (s VerTwoDataTwoPtr) SetVal(v int16) {
 	s.Struct.SetUint16(0, uint16(v))
 }
 
+func (s VerTwoDataTwoPtr_B_) Val(v int16) VerTwoDataTwoPtr_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
+}
 func (s VerTwoDataTwoPtr) Duo() int64 {
 	return int64(s.Struct.Uint64(8))
 }
@@ -2917,6 +3920,12 @@ func (s VerTwoDataTwoPtr) SetDuo(v int64) {
 	s.Struct.SetUint64(8, uint64(v))
 }
 
+func (s VerTwoDataTwoPtr_B_) Duo(v int64) VerTwoDataTwoPtr_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(8, uint64(v))
+	}
+	return s
+}
 func (s VerTwoDataTwoPtr) Ptr1() (VerOneData, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerOneData{Struct: p.Struct()}, err
@@ -2942,6 +3951,28 @@ func (s VerTwoDataTwoPtr) NewPtr1() (VerOneData, error) {
 	return ss, err
 }
 
+func (s VerTwoDataTwoPtr_B_) Ptr1(v VerOneData) VerTwoDataTwoPtr_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoDataTwoPtr_B_) NewPtr1() VerOneData_B_ {
+	if s.Err != nil {
+		return VerOneData_B_{Err: s.Err}
+	}
+	ss, err := NewVerOneData(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerOneData_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerOneData_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s VerTwoDataTwoPtr) Ptr2() (VerOneData, error) {
 	p, err := s.Struct.Ptr(1)
 	return VerOneData{Struct: p.Struct()}, err
@@ -2965,6 +3996,29 @@ func (s VerTwoDataTwoPtr) NewPtr2() (VerOneData, error) {
 	}
 	err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s VerTwoDataTwoPtr_B_) Ptr2(v VerOneData) VerTwoDataTwoPtr_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoDataTwoPtr_B_) NewPtr2() VerOneData_B_ {
+	if s.Err != nil {
+		return VerOneData_B_{Err: s.Err}
+	}
+	ss, err := NewVerOneData(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerOneData_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return VerOneData_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // VerTwoDataTwoPtr_List is a list of VerTwoDataTwoPtr.
@@ -3000,6 +4054,11 @@ func (p VerTwoDataTwoPtr_Promise) Ptr2() VerOneData_Promise {
 
 type HoldsVerEmptyList struct{ capnp.Struct }
 
+type HoldsVerEmptyList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerEmptyList_TypeID is the unique identifier for the type HoldsVerEmptyList.
 const HoldsVerEmptyList_TypeID = 0xde9ed43cfaa83093
 
@@ -3023,6 +4082,16 @@ func (s HoldsVerEmptyList) String() string {
 	return str
 }
 
+func (s HoldsVerEmptyList) Builder_() HoldsVerEmptyList_B_ {
+	return HoldsVerEmptyList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerEmptyList_B_) Reader_() (HoldsVerEmptyList, error) {
+	return HoldsVerEmptyList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerEmptyList) Mylist() (VerEmpty_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerEmpty_List{List: p.List()}, err
@@ -3075,6 +4144,11 @@ func (p HoldsVerEmptyList_Promise) Struct() (HoldsVerEmptyList, error) {
 
 type HoldsVerOneDataList struct{ capnp.Struct }
 
+type HoldsVerOneDataList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerOneDataList_TypeID is the unique identifier for the type HoldsVerOneDataList.
 const HoldsVerOneDataList_TypeID = 0xabd055422a4d7df1
 
@@ -3098,6 +4172,16 @@ func (s HoldsVerOneDataList) String() string {
 	return str
 }
 
+func (s HoldsVerOneDataList) Builder_() HoldsVerOneDataList_B_ {
+	return HoldsVerOneDataList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerOneDataList_B_) Reader_() (HoldsVerOneDataList, error) {
+	return HoldsVerOneDataList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerOneDataList) Mylist() (VerOneData_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerOneData_List{List: p.List()}, err
@@ -3150,6 +4234,11 @@ func (p HoldsVerOneDataList_Promise) Struct() (HoldsVerOneDataList, error) {
 
 type HoldsVerTwoDataList struct{ capnp.Struct }
 
+type HoldsVerTwoDataList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerTwoDataList_TypeID is the unique identifier for the type HoldsVerTwoDataList.
 const HoldsVerTwoDataList_TypeID = 0xcbdc765fd5dff7ba
 
@@ -3173,6 +4262,16 @@ func (s HoldsVerTwoDataList) String() string {
 	return str
 }
 
+func (s HoldsVerTwoDataList) Builder_() HoldsVerTwoDataList_B_ {
+	return HoldsVerTwoDataList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerTwoDataList_B_) Reader_() (HoldsVerTwoDataList, error) {
+	return HoldsVerTwoDataList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerTwoDataList) Mylist() (VerTwoData_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoData_List{List: p.List()}, err
@@ -3225,6 +4324,11 @@ func (p HoldsVerTwoDataList_Promise) Struct() (HoldsVerTwoDataList, error) {
 
 type HoldsVerOnePtrList struct{ capnp.Struct }
 
+type HoldsVerOnePtrList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerOnePtrList_TypeID is the unique identifier for the type HoldsVerOnePtrList.
 const HoldsVerOnePtrList_TypeID = 0xe508a29c83a059f8
 
@@ -3248,6 +4352,16 @@ func (s HoldsVerOnePtrList) String() string {
 	return str
 }
 
+func (s HoldsVerOnePtrList) Builder_() HoldsVerOnePtrList_B_ {
+	return HoldsVerOnePtrList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerOnePtrList_B_) Reader_() (HoldsVerOnePtrList, error) {
+	return HoldsVerOnePtrList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerOnePtrList) Mylist() (VerOnePtr_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerOnePtr_List{List: p.List()}, err
@@ -3300,6 +4414,11 @@ func (p HoldsVerOnePtrList_Promise) Struct() (HoldsVerOnePtrList, error) {
 
 type HoldsVerTwoPtrList struct{ capnp.Struct }
 
+type HoldsVerTwoPtrList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerTwoPtrList_TypeID is the unique identifier for the type HoldsVerTwoPtrList.
 const HoldsVerTwoPtrList_TypeID = 0xcf9beaca1cc180c8
 
@@ -3323,6 +4442,16 @@ func (s HoldsVerTwoPtrList) String() string {
 	return str
 }
 
+func (s HoldsVerTwoPtrList) Builder_() HoldsVerTwoPtrList_B_ {
+	return HoldsVerTwoPtrList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerTwoPtrList_B_) Reader_() (HoldsVerTwoPtrList, error) {
+	return HoldsVerTwoPtrList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerTwoPtrList) Mylist() (VerTwoPtr_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoPtr_List{List: p.List()}, err
@@ -3375,6 +4504,11 @@ func (p HoldsVerTwoPtrList_Promise) Struct() (HoldsVerTwoPtrList, error) {
 
 type HoldsVerTwoTwoList struct{ capnp.Struct }
 
+type HoldsVerTwoTwoList_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerTwoTwoList_TypeID is the unique identifier for the type HoldsVerTwoTwoList.
 const HoldsVerTwoTwoList_TypeID = 0x95befe3f14606e6b
 
@@ -3398,6 +4532,16 @@ func (s HoldsVerTwoTwoList) String() string {
 	return str
 }
 
+func (s HoldsVerTwoTwoList) Builder_() HoldsVerTwoTwoList_B_ {
+	return HoldsVerTwoTwoList_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerTwoTwoList_B_) Reader_() (HoldsVerTwoTwoList, error) {
+	return HoldsVerTwoTwoList{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerTwoTwoList) Mylist() (VerTwoDataTwoPtr_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoDataTwoPtr_List{List: p.List()}, err
@@ -3450,6 +4594,11 @@ func (p HoldsVerTwoTwoList_Promise) Struct() (HoldsVerTwoTwoList, error) {
 
 type HoldsVerTwoTwoPlus struct{ capnp.Struct }
 
+type HoldsVerTwoTwoPlus_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsVerTwoTwoPlus_TypeID is the unique identifier for the type HoldsVerTwoTwoPlus.
 const HoldsVerTwoTwoPlus_TypeID = 0x87c33f2330feb3d8
 
@@ -3473,6 +4622,16 @@ func (s HoldsVerTwoTwoPlus) String() string {
 	return str
 }
 
+func (s HoldsVerTwoTwoPlus) Builder_() HoldsVerTwoTwoPlus_B_ {
+	return HoldsVerTwoTwoPlus_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsVerTwoTwoPlus_B_) Reader_() (HoldsVerTwoTwoPlus, error) {
+	return HoldsVerTwoTwoPlus{Struct: s.Struct}, *s.Err
+}
 func (s HoldsVerTwoTwoPlus) Mylist() (VerTwoTwoPlus_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoTwoPlus_List{List: p.List()}, err
@@ -3525,6 +4684,11 @@ func (p HoldsVerTwoTwoPlus_Promise) Struct() (HoldsVerTwoTwoPlus, error) {
 
 type VerTwoTwoPlus struct{ capnp.Struct }
 
+type VerTwoTwoPlus_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VerTwoTwoPlus_TypeID is the unique identifier for the type VerTwoTwoPlus.
 const VerTwoTwoPlus_TypeID = 0xce44aee2d9e25049
 
@@ -3548,6 +4712,16 @@ func (s VerTwoTwoPlus) String() string {
 	return str
 }
 
+func (s VerTwoTwoPlus) Builder_() VerTwoTwoPlus_B_ {
+	return VerTwoTwoPlus_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VerTwoTwoPlus_B_) Reader_() (VerTwoTwoPlus, error) {
+	return VerTwoTwoPlus{Struct: s.Struct}, *s.Err
+}
 func (s VerTwoTwoPlus) Val() int16 {
 	return int16(s.Struct.Uint16(0))
 }
@@ -3556,6 +4730,12 @@ func (s VerTwoTwoPlus) SetVal(v int16) {
 	s.Struct.SetUint16(0, uint16(v))
 }
 
+func (s VerTwoTwoPlus_B_) Val(v int16) VerTwoTwoPlus_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
+}
 func (s VerTwoTwoPlus) Duo() int64 {
 	return int64(s.Struct.Uint64(8))
 }
@@ -3564,6 +4744,12 @@ func (s VerTwoTwoPlus) SetDuo(v int64) {
 	s.Struct.SetUint64(8, uint64(v))
 }
 
+func (s VerTwoTwoPlus_B_) Duo(v int64) VerTwoTwoPlus_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(8, uint64(v))
+	}
+	return s
+}
 func (s VerTwoTwoPlus) Ptr1() (VerTwoDataTwoPtr, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoDataTwoPtr{Struct: p.Struct()}, err
@@ -3589,6 +4775,28 @@ func (s VerTwoTwoPlus) NewPtr1() (VerTwoDataTwoPtr, error) {
 	return ss, err
 }
 
+func (s VerTwoTwoPlus_B_) Ptr1(v VerTwoDataTwoPtr) VerTwoTwoPlus_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoTwoPlus_B_) NewPtr1() VerTwoDataTwoPtr_B_ {
+	if s.Err != nil {
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	ss, err := NewVerTwoDataTwoPtr(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerTwoDataTwoPtr_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s VerTwoTwoPlus) Ptr2() (VerTwoDataTwoPtr, error) {
 	p, err := s.Struct.Ptr(1)
 	return VerTwoDataTwoPtr{Struct: p.Struct()}, err
@@ -3614,6 +4822,28 @@ func (s VerTwoTwoPlus) NewPtr2() (VerTwoDataTwoPtr, error) {
 	return ss, err
 }
 
+func (s VerTwoTwoPlus_B_) Ptr2(v VerTwoDataTwoPtr) VerTwoTwoPlus_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s VerTwoTwoPlus_B_) NewPtr2() VerTwoDataTwoPtr_B_ {
+	if s.Err != nil {
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	ss, err := NewVerTwoDataTwoPtr(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return VerTwoDataTwoPtr_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s VerTwoTwoPlus) Tre() int64 {
 	return int64(s.Struct.Uint64(16))
 }
@@ -3622,6 +4852,12 @@ func (s VerTwoTwoPlus) SetTre(v int64) {
 	s.Struct.SetUint64(16, uint64(v))
 }
 
+func (s VerTwoTwoPlus_B_) Tre(v int64) VerTwoTwoPlus_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(16, uint64(v))
+	}
+	return s
+}
 func (s VerTwoTwoPlus) Lst3() (capnp.Int64List, error) {
 	p, err := s.Struct.Ptr(2)
 	return capnp.Int64List{List: p.List()}, err
@@ -3678,6 +4914,11 @@ func (p VerTwoTwoPlus_Promise) Ptr2() VerTwoDataTwoPtr_Promise {
 
 type HoldsText struct{ capnp.Struct }
 
+type HoldsText_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HoldsText_TypeID is the unique identifier for the type HoldsText.
 const HoldsText_TypeID = 0xe5817f849ff906dc
 
@@ -3701,6 +4942,16 @@ func (s HoldsText) String() string {
 	return str
 }
 
+func (s HoldsText) Builder_() HoldsText_B_ {
+	return HoldsText_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HoldsText_B_) Reader_() (HoldsText, error) {
+	return HoldsText{Struct: s.Struct}, *s.Err
+}
 func (s HoldsText) Txt() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -3720,6 +4971,12 @@ func (s HoldsText) SetTxt(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s HoldsText_B_) Txt(v string) HoldsText_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s HoldsText) Lst() (capnp.TextList, error) {
 	p, err := s.Struct.Ptr(1)
 	return capnp.TextList{List: p.List()}, err
@@ -3793,6 +5050,11 @@ func (p HoldsText_Promise) Struct() (HoldsText, error) {
 
 type WrapEmpty struct{ capnp.Struct }
 
+type WrapEmpty_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // WrapEmpty_TypeID is the unique identifier for the type WrapEmpty.
 const WrapEmpty_TypeID = 0x9ab599979b02ac59
 
@@ -3816,6 +5078,16 @@ func (s WrapEmpty) String() string {
 	return str
 }
 
+func (s WrapEmpty) Builder_() WrapEmpty_B_ {
+	return WrapEmpty_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s WrapEmpty_B_) Reader_() (WrapEmpty, error) {
+	return WrapEmpty{Struct: s.Struct}, *s.Err
+}
 func (s WrapEmpty) MightNotBeReallyEmpty() (VerEmpty, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerEmpty{Struct: p.Struct()}, err
@@ -3839,6 +5111,29 @@ func (s WrapEmpty) NewMightNotBeReallyEmpty() (VerEmpty, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s WrapEmpty_B_) MightNotBeReallyEmpty(v VerEmpty) WrapEmpty_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s WrapEmpty_B_) NewMightNotBeReallyEmpty() VerEmpty_B_ {
+	if s.Err != nil {
+		return VerEmpty_B_{Err: s.Err}
+	}
+	ss, err := NewVerEmpty(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerEmpty_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerEmpty_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // WrapEmpty_List is a list of WrapEmpty.
@@ -3868,6 +5163,11 @@ func (p WrapEmpty_Promise) MightNotBeReallyEmpty() VerEmpty_Promise {
 
 type Wrap2x2 struct{ capnp.Struct }
 
+type Wrap2x2_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Wrap2x2_TypeID is the unique identifier for the type Wrap2x2.
 const Wrap2x2_TypeID = 0xe1a2d1d51107bead
 
@@ -3891,6 +5191,16 @@ func (s Wrap2x2) String() string {
 	return str
 }
 
+func (s Wrap2x2) Builder_() Wrap2x2_B_ {
+	return Wrap2x2_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Wrap2x2_B_) Reader_() (Wrap2x2, error) {
+	return Wrap2x2{Struct: s.Struct}, *s.Err
+}
 func (s Wrap2x2) MightNotBeReallyEmpty() (VerTwoDataTwoPtr, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoDataTwoPtr{Struct: p.Struct()}, err
@@ -3914,6 +5224,29 @@ func (s Wrap2x2) NewMightNotBeReallyEmpty() (VerTwoDataTwoPtr, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Wrap2x2_B_) MightNotBeReallyEmpty(v VerTwoDataTwoPtr) Wrap2x2_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Wrap2x2_B_) NewMightNotBeReallyEmpty() VerTwoDataTwoPtr_B_ {
+	if s.Err != nil {
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	ss, err := NewVerTwoDataTwoPtr(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerTwoDataTwoPtr_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerTwoDataTwoPtr_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Wrap2x2_List is a list of Wrap2x2.
@@ -3943,6 +5276,11 @@ func (p Wrap2x2_Promise) MightNotBeReallyEmpty() VerTwoDataTwoPtr_Promise {
 
 type Wrap2x2plus struct{ capnp.Struct }
 
+type Wrap2x2plus_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Wrap2x2plus_TypeID is the unique identifier for the type Wrap2x2plus.
 const Wrap2x2plus_TypeID = 0xe684eb3aef1a6859
 
@@ -3966,6 +5304,16 @@ func (s Wrap2x2plus) String() string {
 	return str
 }
 
+func (s Wrap2x2plus) Builder_() Wrap2x2plus_B_ {
+	return Wrap2x2plus_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Wrap2x2plus_B_) Reader_() (Wrap2x2plus, error) {
+	return Wrap2x2plus{Struct: s.Struct}, *s.Err
+}
 func (s Wrap2x2plus) MightNotBeReallyEmpty() (VerTwoTwoPlus, error) {
 	p, err := s.Struct.Ptr(0)
 	return VerTwoTwoPlus{Struct: p.Struct()}, err
@@ -3989,6 +5337,29 @@ func (s Wrap2x2plus) NewMightNotBeReallyEmpty() (VerTwoTwoPlus, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Wrap2x2plus_B_) MightNotBeReallyEmpty(v VerTwoTwoPlus) Wrap2x2plus_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Wrap2x2plus_B_) NewMightNotBeReallyEmpty() VerTwoTwoPlus_B_ {
+	if s.Err != nil {
+		return VerTwoTwoPlus_B_{Err: s.Err}
+	}
+	ss, err := NewVerTwoTwoPlus(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return VerTwoTwoPlus_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return VerTwoTwoPlus_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Wrap2x2plus_List is a list of Wrap2x2plus.
@@ -4017,6 +5388,11 @@ func (p Wrap2x2plus_Promise) MightNotBeReallyEmpty() VerTwoTwoPlus_Promise {
 }
 
 type VoidUnion struct{ capnp.Struct }
+
+type VoidUnion_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type VoidUnion_Which uint16
 
 const (
@@ -4059,6 +5435,17 @@ func (s VoidUnion) String() string {
 	return str
 }
 
+func (s VoidUnion) Builder_() VoidUnion_B_ {
+	return VoidUnion_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VoidUnion_B_) Reader_() (VoidUnion, error) {
+	return VoidUnion{Struct: s.Struct}, *s.Err
+}
+
 func (s VoidUnion) Which() VoidUnion_Which {
 	return VoidUnion_Which(s.Struct.Uint16(0))
 }
@@ -4095,6 +5482,11 @@ func (p VoidUnion_Promise) Struct() (VoidUnion, error) {
 
 type Nester1Capn struct{ capnp.Struct }
 
+type Nester1Capn_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Nester1Capn_TypeID is the unique identifier for the type Nester1Capn.
 const Nester1Capn_TypeID = 0xf14fad09425d081c
 
@@ -4118,6 +5510,16 @@ func (s Nester1Capn) String() string {
 	return str
 }
 
+func (s Nester1Capn) Builder_() Nester1Capn_B_ {
+	return Nester1Capn_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Nester1Capn_B_) Reader_() (Nester1Capn, error) {
+	return Nester1Capn{Struct: s.Struct}, *s.Err
+}
 func (s Nester1Capn) Strs() (capnp.TextList, error) {
 	p, err := s.Struct.Ptr(0)
 	return capnp.TextList{List: p.List()}, err
@@ -4166,6 +5568,11 @@ func (p Nester1Capn_Promise) Struct() (Nester1Capn, error) {
 
 type RWTestCapn struct{ capnp.Struct }
 
+type RWTestCapn_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // RWTestCapn_TypeID is the unique identifier for the type RWTestCapn.
 const RWTestCapn_TypeID = 0xf7ff4414476c186a
 
@@ -4189,6 +5596,16 @@ func (s RWTestCapn) String() string {
 	return str
 }
 
+func (s RWTestCapn) Builder_() RWTestCapn_B_ {
+	return RWTestCapn_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s RWTestCapn_B_) Reader_() (RWTestCapn, error) {
+	return RWTestCapn{Struct: s.Struct}, *s.Err
+}
 func (s RWTestCapn) NestMatrix() (capnp.PointerList, error) {
 	p, err := s.Struct.Ptr(0)
 	return capnp.PointerList{List: p.List()}, err
@@ -4237,6 +5654,11 @@ func (p RWTestCapn_Promise) Struct() (RWTestCapn, error) {
 
 type ListStructCapn struct{ capnp.Struct }
 
+type ListStructCapn_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // ListStructCapn_TypeID is the unique identifier for the type ListStructCapn.
 const ListStructCapn_TypeID = 0xb1ac056ed7647011
 
@@ -4260,6 +5682,16 @@ func (s ListStructCapn) String() string {
 	return str
 }
 
+func (s ListStructCapn) Builder_() ListStructCapn_B_ {
+	return ListStructCapn_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s ListStructCapn_B_) Reader_() (ListStructCapn, error) {
+	return ListStructCapn{Struct: s.Struct}, *s.Err
+}
 func (s ListStructCapn) Vec() (Nester1Capn_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return Nester1Capn_List{List: p.List()}, err
@@ -4374,6 +5806,11 @@ type Echo_echo struct {
 
 type Echo_echo_Params struct{ capnp.Struct }
 
+type Echo_echo_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Echo_echo_Params_TypeID is the unique identifier for the type Echo_echo_Params.
 const Echo_echo_Params_TypeID = 0x8a165fb4d71bf3a2
 
@@ -4397,6 +5834,16 @@ func (s Echo_echo_Params) String() string {
 	return str
 }
 
+func (s Echo_echo_Params) Builder_() Echo_echo_Params_B_ {
+	return Echo_echo_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Echo_echo_Params_B_) Reader_() (Echo_echo_Params, error) {
+	return Echo_echo_Params{Struct: s.Struct}, *s.Err
+}
 func (s Echo_echo_Params) In() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -4414,6 +5861,13 @@ func (s Echo_echo_Params) InBytes() ([]byte, error) {
 
 func (s Echo_echo_Params) SetIn(v string) error {
 	return s.Struct.SetText(0, v)
+}
+
+func (s Echo_echo_Params_B_) In(v string) Echo_echo_Params_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
 }
 
 // Echo_echo_Params_List is a list of Echo_echo_Params.
@@ -4441,6 +5895,11 @@ func (p Echo_echo_Params_Promise) Struct() (Echo_echo_Params, error) {
 
 type Echo_echo_Results struct{ capnp.Struct }
 
+type Echo_echo_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Echo_echo_Results_TypeID is the unique identifier for the type Echo_echo_Results.
 const Echo_echo_Results_TypeID = 0x9b37d729b9dd7b9d
 
@@ -4464,6 +5923,16 @@ func (s Echo_echo_Results) String() string {
 	return str
 }
 
+func (s Echo_echo_Results) Builder_() Echo_echo_Results_B_ {
+	return Echo_echo_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Echo_echo_Results_B_) Reader_() (Echo_echo_Results, error) {
+	return Echo_echo_Results{Struct: s.Struct}, *s.Err
+}
 func (s Echo_echo_Results) Out() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -4481,6 +5950,13 @@ func (s Echo_echo_Results) OutBytes() ([]byte, error) {
 
 func (s Echo_echo_Results) SetOut(v string) error {
 	return s.Struct.SetText(0, v)
+}
+
+func (s Echo_echo_Results_B_) Out(v string) Echo_echo_Results_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
 }
 
 // Echo_echo_Results_List is a list of Echo_echo_Results.
@@ -4510,6 +5986,11 @@ func (p Echo_echo_Results_Promise) Struct() (Echo_echo_Results, error) {
 
 type Hoth struct{ capnp.Struct }
 
+type Hoth_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hoth_TypeID is the unique identifier for the type Hoth.
 const Hoth_TypeID = 0xad87da456fb0ebb9
 
@@ -4533,6 +6014,16 @@ func (s Hoth) String() string {
 	return str
 }
 
+func (s Hoth) Builder_() Hoth_B_ {
+	return Hoth_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hoth_B_) Reader_() (Hoth, error) {
+	return Hoth{Struct: s.Struct}, *s.Err
+}
 func (s Hoth) Base() (EchoBase, error) {
 	p, err := s.Struct.Ptr(0)
 	return EchoBase{Struct: p.Struct()}, err
@@ -4556,6 +6047,29 @@ func (s Hoth) NewBase() (EchoBase, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Hoth_B_) Base(v EchoBase) Hoth_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Hoth_B_) NewBase() EchoBase_B_ {
+	if s.Err != nil {
+		return EchoBase_B_{Err: s.Err}
+	}
+	ss, err := NewEchoBase(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return EchoBase_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return EchoBase_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Hoth_List is a list of Hoth.
@@ -4585,6 +6099,11 @@ func (p Hoth_Promise) Base() EchoBase_Promise {
 
 type EchoBase struct{ capnp.Struct }
 
+type EchoBase_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // EchoBase_TypeID is the unique identifier for the type EchoBase.
 const EchoBase_TypeID = 0xa8bf13fef2674866
 
@@ -4608,6 +6127,16 @@ func (s EchoBase) String() string {
 	return str
 }
 
+func (s EchoBase) Builder_() EchoBase_B_ {
+	return EchoBase_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s EchoBase_B_) Reader_() (EchoBase, error) {
+	return EchoBase{Struct: s.Struct}, *s.Err
+}
 func (s EchoBase) Echo() Echo {
 	p, _ := s.Struct.Ptr(0)
 	return Echo{Client: p.Interface().Client()}
@@ -4654,6 +6183,11 @@ func (p EchoBase_Promise) Echo() Echo {
 
 type EchoBases struct{ capnp.Struct }
 
+type EchoBases_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // EchoBases_TypeID is the unique identifier for the type EchoBases.
 const EchoBases_TypeID = 0xc02e9d191c6ac0bc
 
@@ -4677,6 +6211,16 @@ func (s EchoBases) String() string {
 	return str
 }
 
+func (s EchoBases) Builder_() EchoBases_B_ {
+	return EchoBases_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s EchoBases_B_) Reader_() (EchoBases, error) {
+	return EchoBases{Struct: s.Struct}, *s.Err
+}
 func (s EchoBases) Bases() (EchoBase_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return EchoBase_List{List: p.List()}, err
@@ -4725,6 +6269,11 @@ func (p EchoBases_Promise) Struct() (EchoBases, error) {
 
 type StackingRoot struct{ capnp.Struct }
 
+type StackingRoot_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // StackingRoot_TypeID is the unique identifier for the type StackingRoot.
 const StackingRoot_TypeID = 0x8fae7b41c61fc890
 
@@ -4748,6 +6297,16 @@ func (s StackingRoot) String() string {
 	return str
 }
 
+func (s StackingRoot) Builder_() StackingRoot_B_ {
+	return StackingRoot_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s StackingRoot_B_) Reader_() (StackingRoot, error) {
+	return StackingRoot{Struct: s.Struct}, *s.Err
+}
 func (s StackingRoot) A() (StackingA, error) {
 	p, err := s.Struct.Ptr(1)
 	return StackingA{Struct: p.Struct()}, err
@@ -4773,6 +6332,28 @@ func (s StackingRoot) NewA() (StackingA, error) {
 	return ss, err
 }
 
+func (s StackingRoot_B_) A(v StackingA) StackingRoot_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s StackingRoot_B_) NewA() StackingA_B_ {
+	if s.Err != nil {
+		return StackingA_B_{Err: s.Err}
+	}
+	ss, err := NewStackingA(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return StackingA_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return StackingA_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s StackingRoot) AWithDefault() (StackingA, error) {
 	p, err := s.Struct.Ptr(0)
 	if err != nil {
@@ -4800,6 +6381,29 @@ func (s StackingRoot) NewAWithDefault() (StackingA, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s StackingRoot_B_) AWithDefault(v StackingA) StackingRoot_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s StackingRoot_B_) NewAWithDefault() StackingA_B_ {
+	if s.Err != nil {
+		return StackingA_B_{Err: s.Err}
+	}
+	ss, err := NewStackingA(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return StackingA_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return StackingA_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // StackingRoot_List is a list of StackingRoot.
@@ -4833,6 +6437,11 @@ func (p StackingRoot_Promise) AWithDefault() StackingA_Promise {
 
 type StackingA struct{ capnp.Struct }
 
+type StackingA_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // StackingA_TypeID is the unique identifier for the type StackingA.
 const StackingA_TypeID = 0x9d3032ff86043b75
 
@@ -4856,6 +6465,16 @@ func (s StackingA) String() string {
 	return str
 }
 
+func (s StackingA) Builder_() StackingA_B_ {
+	return StackingA_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s StackingA_B_) Reader_() (StackingA, error) {
+	return StackingA{Struct: s.Struct}, *s.Err
+}
 func (s StackingA) Num() int32 {
 	return int32(s.Struct.Uint32(0))
 }
@@ -4864,6 +6483,12 @@ func (s StackingA) SetNum(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
 }
 
+func (s StackingA_B_) Num(v int32) StackingA_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
+}
 func (s StackingA) B() (StackingB, error) {
 	p, err := s.Struct.Ptr(0)
 	return StackingB{Struct: p.Struct()}, err
@@ -4887,6 +6512,29 @@ func (s StackingA) NewB() (StackingB, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s StackingA_B_) B(v StackingB) StackingA_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s StackingA_B_) NewB() StackingB_B_ {
+	if s.Err != nil {
+		return StackingB_B_{Err: s.Err}
+	}
+	ss, err := NewStackingB(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return StackingB_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return StackingB_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // StackingA_List is a list of StackingA.
@@ -4916,6 +6564,11 @@ func (p StackingA_Promise) B() StackingB_Promise {
 
 type StackingB struct{ capnp.Struct }
 
+type StackingB_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // StackingB_TypeID is the unique identifier for the type StackingB.
 const StackingB_TypeID = 0x85257b30d6edf8c5
 
@@ -4939,12 +6592,29 @@ func (s StackingB) String() string {
 	return str
 }
 
+func (s StackingB) Builder_() StackingB_B_ {
+	return StackingB_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s StackingB_B_) Reader_() (StackingB, error) {
+	return StackingB{Struct: s.Struct}, *s.Err
+}
 func (s StackingB) Num() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
 func (s StackingB) SetNum(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s StackingB_B_) Num(v int32) StackingB_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
 }
 
 // StackingB_List is a list of StackingB.
@@ -5036,6 +6706,11 @@ type CallSequence_getNumber struct {
 
 type CallSequence_getNumber_Params struct{ capnp.Struct }
 
+type CallSequence_getNumber_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // CallSequence_getNumber_Params_TypeID is the unique identifier for the type CallSequence_getNumber_Params.
 const CallSequence_getNumber_Params_TypeID = 0xf58782f48a121998
 
@@ -5057,6 +6732,17 @@ func ReadRootCallSequence_getNumber_Params(msg *capnp.Message) (CallSequence_get
 func (s CallSequence_getNumber_Params) String() string {
 	str, _ := text.Marshal(0xf58782f48a121998, s.Struct)
 	return str
+}
+
+func (s CallSequence_getNumber_Params) Builder_() CallSequence_getNumber_Params_B_ {
+	return CallSequence_getNumber_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s CallSequence_getNumber_Params_B_) Reader_() (CallSequence_getNumber_Params, error) {
+	return CallSequence_getNumber_Params{Struct: s.Struct}, *s.Err
 }
 
 // CallSequence_getNumber_Params_List is a list of CallSequence_getNumber_Params.
@@ -5086,6 +6772,11 @@ func (p CallSequence_getNumber_Params_Promise) Struct() (CallSequence_getNumber_
 
 type CallSequence_getNumber_Results struct{ capnp.Struct }
 
+type CallSequence_getNumber_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // CallSequence_getNumber_Results_TypeID is the unique identifier for the type CallSequence_getNumber_Results.
 const CallSequence_getNumber_Results_TypeID = 0xa465f9502fd11e97
 
@@ -5109,12 +6800,29 @@ func (s CallSequence_getNumber_Results) String() string {
 	return str
 }
 
+func (s CallSequence_getNumber_Results) Builder_() CallSequence_getNumber_Results_B_ {
+	return CallSequence_getNumber_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s CallSequence_getNumber_Results_B_) Reader_() (CallSequence_getNumber_Results, error) {
+	return CallSequence_getNumber_Results{Struct: s.Struct}, *s.Err
+}
 func (s CallSequence_getNumber_Results) N() uint32 {
 	return s.Struct.Uint32(0)
 }
 
 func (s CallSequence_getNumber_Results) SetN(v uint32) {
 	s.Struct.SetUint32(0, v)
+}
+
+func (s CallSequence_getNumber_Results_B_) N(v uint32) CallSequence_getNumber_Results_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // CallSequence_getNumber_Results_List is a list of CallSequence_getNumber_Results.
@@ -5144,6 +6852,11 @@ func (p CallSequence_getNumber_Results_Promise) Struct() (CallSequence_getNumber
 
 type Defaults struct{ capnp.Struct }
 
+type Defaults_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Defaults_TypeID is the unique identifier for the type Defaults.
 const Defaults_TypeID = 0x97e38948c61f878d
 
@@ -5167,6 +6880,16 @@ func (s Defaults) String() string {
 	return str
 }
 
+func (s Defaults) Builder_() Defaults_B_ {
+	return Defaults_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Defaults_B_) Reader_() (Defaults, error) {
+	return Defaults{Struct: s.Struct}, *s.Err
+}
 func (s Defaults) Text() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.TextDefault("foo"), err
@@ -5186,6 +6909,12 @@ func (s Defaults) SetText(v string) error {
 	return s.Struct.SetNewText(0, v)
 }
 
+func (s Defaults_B_) Text(v string) Defaults_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetNewText(0, v)
+	}
+	return s
+}
 func (s Defaults) Data() ([]byte, error) {
 	p, err := s.Struct.Ptr(1)
 	return []byte(p.DataDefault([]byte{0x62, 0x61, 0x72})), err
@@ -5203,6 +6932,15 @@ func (s Defaults) SetData(v []byte) error {
 	return s.Struct.SetData(1, v)
 }
 
+func (s Defaults_B_) Data(v []byte) Defaults_B_ {
+	if *s.Err == nil {
+		if v == nil {
+			v = []byte{}
+		}
+		*s.Err = s.Struct.SetData(1, v)
+	}
+	return s
+}
 func (s Defaults) Float() float32 {
 	return math.Float32frombits(s.Struct.Uint32(0) ^ 0x4048f5c3)
 }
@@ -5211,6 +6949,12 @@ func (s Defaults) SetFloat(v float32) {
 	s.Struct.SetUint32(0, math.Float32bits(v)^0x4048f5c3)
 }
 
+func (s Defaults_B_) Float(v float32) Defaults_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint32(0, math.Float32bits(v)^0x4048f5c3)
+	}
+	return s
+}
 func (s Defaults) Int() int32 {
 	return int32(s.Struct.Uint32(4) ^ 4294967173)
 }
@@ -5219,12 +6963,25 @@ func (s Defaults) SetInt(v int32) {
 	s.Struct.SetUint32(4, uint32(v)^4294967173)
 }
 
+func (s Defaults_B_) Int(v int32) Defaults_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(4, uint32(v)^4294967173)
+	}
+	return s
+}
 func (s Defaults) Uint() uint32 {
 	return s.Struct.Uint32(8) ^ 42
 }
 
 func (s Defaults) SetUint(v uint32) {
 	s.Struct.SetUint32(8, v^42)
+}
+
+func (s Defaults_B_) Uint(v uint32) Defaults_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(8, v^42)
+	}
+	return s
 }
 
 // Defaults_List is a list of Defaults.
@@ -5250,6 +7007,11 @@ func (p Defaults_Promise) Struct() (Defaults, error) {
 
 type BenchmarkA struct{ capnp.Struct }
 
+type BenchmarkA_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // BenchmarkA_TypeID is the unique identifier for the type BenchmarkA.
 const BenchmarkA_TypeID = 0xde2a1a960863c11c
 
@@ -5273,6 +7035,16 @@ func (s BenchmarkA) String() string {
 	return str
 }
 
+func (s BenchmarkA) Builder_() BenchmarkA_B_ {
+	return BenchmarkA_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s BenchmarkA_B_) Reader_() (BenchmarkA, error) {
+	return BenchmarkA{Struct: s.Struct}, *s.Err
+}
 func (s BenchmarkA) Name() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -5292,6 +7064,12 @@ func (s BenchmarkA) SetName(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s BenchmarkA_B_) Name(v string) BenchmarkA_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s BenchmarkA) BirthDay() int64 {
 	return int64(s.Struct.Uint64(0))
 }
@@ -5300,6 +7078,12 @@ func (s BenchmarkA) SetBirthDay(v int64) {
 	s.Struct.SetUint64(0, uint64(v))
 }
 
+func (s BenchmarkA_B_) BirthDay(v int64) BenchmarkA_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(0, uint64(v))
+	}
+	return s
+}
 func (s BenchmarkA) Phone() (string, error) {
 	p, err := s.Struct.Ptr(1)
 	return p.Text(), err
@@ -5319,6 +7103,12 @@ func (s BenchmarkA) SetPhone(v string) error {
 	return s.Struct.SetText(1, v)
 }
 
+func (s BenchmarkA_B_) Phone(v string) BenchmarkA_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(1, v)
+	}
+	return s
+}
 func (s BenchmarkA) Siblings() int32 {
 	return int32(s.Struct.Uint32(8))
 }
@@ -5327,6 +7117,12 @@ func (s BenchmarkA) SetSiblings(v int32) {
 	s.Struct.SetUint32(8, uint32(v))
 }
 
+func (s BenchmarkA_B_) Siblings(v int32) BenchmarkA_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(8, uint32(v))
+	}
+	return s
+}
 func (s BenchmarkA) Spouse() bool {
 	return s.Struct.Bit(96)
 }
@@ -5335,12 +7131,25 @@ func (s BenchmarkA) SetSpouse(v bool) {
 	s.Struct.SetBit(96, v)
 }
 
+func (s BenchmarkA_B_) Spouse(v bool) BenchmarkA_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(96, v)
+	}
+	return s
+}
 func (s BenchmarkA) Money() float64 {
 	return math.Float64frombits(s.Struct.Uint64(16))
 }
 
 func (s BenchmarkA) SetMoney(v float64) {
 	s.Struct.SetUint64(16, math.Float64bits(v))
+}
+
+func (s BenchmarkA_B_) Money(v float64) BenchmarkA_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint64(16, math.Float64bits(v))
+	}
+	return s
 }
 
 // BenchmarkA_List is a list of BenchmarkA.

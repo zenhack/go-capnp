@@ -80,6 +80,11 @@ type HashFactory_newSha1 struct {
 
 type HashFactory_newSha1_Params struct{ capnp.Struct }
 
+type HashFactory_newSha1_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HashFactory_newSha1_Params_TypeID is the unique identifier for the type HashFactory_newSha1_Params.
 const HashFactory_newSha1_Params_TypeID = 0x92b20ad1a58ca0ca
 
@@ -101,6 +106,17 @@ func ReadRootHashFactory_newSha1_Params(msg *capnp.Message) (HashFactory_newSha1
 func (s HashFactory_newSha1_Params) String() string {
 	str, _ := text.Marshal(0x92b20ad1a58ca0ca, s.Struct)
 	return str
+}
+
+func (s HashFactory_newSha1_Params) Builder_() HashFactory_newSha1_Params_B_ {
+	return HashFactory_newSha1_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HashFactory_newSha1_Params_B_) Reader_() (HashFactory_newSha1_Params, error) {
+	return HashFactory_newSha1_Params{Struct: s.Struct}, *s.Err
 }
 
 // HashFactory_newSha1_Params_List is a list of HashFactory_newSha1_Params.
@@ -130,6 +146,11 @@ func (p HashFactory_newSha1_Params_Promise) Struct() (HashFactory_newSha1_Params
 
 type HashFactory_newSha1_Results struct{ capnp.Struct }
 
+type HashFactory_newSha1_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HashFactory_newSha1_Results_TypeID is the unique identifier for the type HashFactory_newSha1_Results.
 const HashFactory_newSha1_Results_TypeID = 0xea3e50f7663f7bdf
 
@@ -153,6 +174,16 @@ func (s HashFactory_newSha1_Results) String() string {
 	return str
 }
 
+func (s HashFactory_newSha1_Results) Builder_() HashFactory_newSha1_Results_B_ {
+	return HashFactory_newSha1_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HashFactory_newSha1_Results_B_) Reader_() (HashFactory_newSha1_Results, error) {
+	return HashFactory_newSha1_Results{Struct: s.Struct}, *s.Err
+}
 func (s HashFactory_newSha1_Results) Hash() Hash {
 	p, _ := s.Struct.Ptr(0)
 	return Hash{Client: p.Interface().Client()}
@@ -314,6 +345,11 @@ type Hash_sum struct {
 
 type Hash_write_Params struct{ capnp.Struct }
 
+type Hash_write_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hash_write_Params_TypeID is the unique identifier for the type Hash_write_Params.
 const Hash_write_Params_TypeID = 0xdffe94ae546cdee3
 
@@ -337,6 +373,16 @@ func (s Hash_write_Params) String() string {
 	return str
 }
 
+func (s Hash_write_Params) Builder_() Hash_write_Params_B_ {
+	return Hash_write_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hash_write_Params_B_) Reader_() (Hash_write_Params, error) {
+	return Hash_write_Params{Struct: s.Struct}, *s.Err
+}
 func (s Hash_write_Params) Data() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
@@ -349,6 +395,13 @@ func (s Hash_write_Params) HasData() bool {
 
 func (s Hash_write_Params) SetData(v []byte) error {
 	return s.Struct.SetData(0, v)
+}
+
+func (s Hash_write_Params_B_) Data(v []byte) Hash_write_Params_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetData(0, v)
+	}
+	return s
 }
 
 // Hash_write_Params_List is a list of Hash_write_Params.
@@ -378,6 +431,11 @@ func (p Hash_write_Params_Promise) Struct() (Hash_write_Params, error) {
 
 type Hash_write_Results struct{ capnp.Struct }
 
+type Hash_write_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hash_write_Results_TypeID is the unique identifier for the type Hash_write_Results.
 const Hash_write_Results_TypeID = 0x80ac741ec7fb8f65
 
@@ -399,6 +457,17 @@ func ReadRootHash_write_Results(msg *capnp.Message) (Hash_write_Results, error) 
 func (s Hash_write_Results) String() string {
 	str, _ := text.Marshal(0x80ac741ec7fb8f65, s.Struct)
 	return str
+}
+
+func (s Hash_write_Results) Builder_() Hash_write_Results_B_ {
+	return Hash_write_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hash_write_Results_B_) Reader_() (Hash_write_Results, error) {
+	return Hash_write_Results{Struct: s.Struct}, *s.Err
 }
 
 // Hash_write_Results_List is a list of Hash_write_Results.
@@ -428,6 +497,11 @@ func (p Hash_write_Results_Promise) Struct() (Hash_write_Results, error) {
 
 type Hash_sum_Params struct{ capnp.Struct }
 
+type Hash_sum_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hash_sum_Params_TypeID is the unique identifier for the type Hash_sum_Params.
 const Hash_sum_Params_TypeID = 0xe74bb2d0190cf89c
 
@@ -449,6 +523,17 @@ func ReadRootHash_sum_Params(msg *capnp.Message) (Hash_sum_Params, error) {
 func (s Hash_sum_Params) String() string {
 	str, _ := text.Marshal(0xe74bb2d0190cf89c, s.Struct)
 	return str
+}
+
+func (s Hash_sum_Params) Builder_() Hash_sum_Params_B_ {
+	return Hash_sum_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hash_sum_Params_B_) Reader_() (Hash_sum_Params, error) {
+	return Hash_sum_Params{Struct: s.Struct}, *s.Err
 }
 
 // Hash_sum_Params_List is a list of Hash_sum_Params.
@@ -476,6 +561,11 @@ func (p Hash_sum_Params_Promise) Struct() (Hash_sum_Params, error) {
 
 type Hash_sum_Results struct{ capnp.Struct }
 
+type Hash_sum_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hash_sum_Results_TypeID is the unique identifier for the type Hash_sum_Results.
 const Hash_sum_Results_TypeID = 0xd093963b95a4e107
 
@@ -499,6 +589,16 @@ func (s Hash_sum_Results) String() string {
 	return str
 }
 
+func (s Hash_sum_Results) Builder_() Hash_sum_Results_B_ {
+	return Hash_sum_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hash_sum_Results_B_) Reader_() (Hash_sum_Results, error) {
+	return Hash_sum_Results{Struct: s.Struct}, *s.Err
+}
 func (s Hash_sum_Results) Hash() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
@@ -511,6 +611,13 @@ func (s Hash_sum_Results) HasHash() bool {
 
 func (s Hash_sum_Results) SetHash(v []byte) error {
 	return s.Struct.SetData(0, v)
+}
+
+func (s Hash_sum_Results_B_) Hash(v []byte) Hash_sum_Results_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetData(0, v)
+	}
+	return s
 }
 
 // Hash_sum_Results_List is a list of Hash_sum_Results.

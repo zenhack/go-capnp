@@ -101,6 +101,11 @@ type HandleFactory_newHandle struct {
 
 type HandleFactory_newHandle_Params struct{ capnp.Struct }
 
+type HandleFactory_newHandle_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HandleFactory_newHandle_Params_TypeID is the unique identifier for the type HandleFactory_newHandle_Params.
 const HandleFactory_newHandle_Params_TypeID = 0x99821793f0a50b5e
 
@@ -122,6 +127,17 @@ func ReadRootHandleFactory_newHandle_Params(msg *capnp.Message) (HandleFactory_n
 func (s HandleFactory_newHandle_Params) String() string {
 	str, _ := text.Marshal(0x99821793f0a50b5e, s.Struct)
 	return str
+}
+
+func (s HandleFactory_newHandle_Params) Builder_() HandleFactory_newHandle_Params_B_ {
+	return HandleFactory_newHandle_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HandleFactory_newHandle_Params_B_) Reader_() (HandleFactory_newHandle_Params, error) {
+	return HandleFactory_newHandle_Params{Struct: s.Struct}, *s.Err
 }
 
 // HandleFactory_newHandle_Params_List is a list of HandleFactory_newHandle_Params.
@@ -151,6 +167,11 @@ func (p HandleFactory_newHandle_Params_Promise) Struct() (HandleFactory_newHandl
 
 type HandleFactory_newHandle_Results struct{ capnp.Struct }
 
+type HandleFactory_newHandle_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // HandleFactory_newHandle_Results_TypeID is the unique identifier for the type HandleFactory_newHandle_Results.
 const HandleFactory_newHandle_Results_TypeID = 0xd57b5111c59d048c
 
@@ -174,6 +195,16 @@ func (s HandleFactory_newHandle_Results) String() string {
 	return str
 }
 
+func (s HandleFactory_newHandle_Results) Builder_() HandleFactory_newHandle_Results_B_ {
+	return HandleFactory_newHandle_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s HandleFactory_newHandle_Results_B_) Reader_() (HandleFactory_newHandle_Results, error) {
+	return HandleFactory_newHandle_Results{Struct: s.Struct}, *s.Err
+}
 func (s HandleFactory_newHandle_Results) Handle() Handle {
 	p, _ := s.Struct.Ptr(0)
 	return Handle{Client: p.Interface().Client()}
@@ -290,6 +321,11 @@ type Hanger_hang struct {
 
 type Hanger_hang_Params struct{ capnp.Struct }
 
+type Hanger_hang_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hanger_hang_Params_TypeID is the unique identifier for the type Hanger_hang_Params.
 const Hanger_hang_Params_TypeID = 0xb4512d1c0c85f06f
 
@@ -311,6 +347,17 @@ func ReadRootHanger_hang_Params(msg *capnp.Message) (Hanger_hang_Params, error) 
 func (s Hanger_hang_Params) String() string {
 	str, _ := text.Marshal(0xb4512d1c0c85f06f, s.Struct)
 	return str
+}
+
+func (s Hanger_hang_Params) Builder_() Hanger_hang_Params_B_ {
+	return Hanger_hang_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hanger_hang_Params_B_) Reader_() (Hanger_hang_Params, error) {
+	return Hanger_hang_Params{Struct: s.Struct}, *s.Err
 }
 
 // Hanger_hang_Params_List is a list of Hanger_hang_Params.
@@ -340,6 +387,11 @@ func (p Hanger_hang_Params_Promise) Struct() (Hanger_hang_Params, error) {
 
 type Hanger_hang_Results struct{ capnp.Struct }
 
+type Hanger_hang_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Hanger_hang_Results_TypeID is the unique identifier for the type Hanger_hang_Results.
 const Hanger_hang_Results_TypeID = 0xb9c9455b55ed47b0
 
@@ -361,6 +413,17 @@ func ReadRootHanger_hang_Results(msg *capnp.Message) (Hanger_hang_Results, error
 func (s Hanger_hang_Results) String() string {
 	str, _ := text.Marshal(0xb9c9455b55ed47b0, s.Struct)
 	return str
+}
+
+func (s Hanger_hang_Results) Builder_() Hanger_hang_Results_B_ {
+	return Hanger_hang_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Hanger_hang_Results_B_) Reader_() (Hanger_hang_Results, error) {
+	return Hanger_hang_Results{Struct: s.Struct}, *s.Err
 }
 
 // Hanger_hang_Results_List is a list of Hanger_hang_Results.
@@ -456,6 +519,11 @@ type CallOrder_getCallSequence struct {
 
 type CallOrder_getCallSequence_Params struct{ capnp.Struct }
 
+type CallOrder_getCallSequence_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // CallOrder_getCallSequence_Params_TypeID is the unique identifier for the type CallOrder_getCallSequence_Params.
 const CallOrder_getCallSequence_Params_TypeID = 0x993e61d6a54c166f
 
@@ -479,12 +547,29 @@ func (s CallOrder_getCallSequence_Params) String() string {
 	return str
 }
 
+func (s CallOrder_getCallSequence_Params) Builder_() CallOrder_getCallSequence_Params_B_ {
+	return CallOrder_getCallSequence_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s CallOrder_getCallSequence_Params_B_) Reader_() (CallOrder_getCallSequence_Params, error) {
+	return CallOrder_getCallSequence_Params{Struct: s.Struct}, *s.Err
+}
 func (s CallOrder_getCallSequence_Params) Expected() uint32 {
 	return s.Struct.Uint32(0)
 }
 
 func (s CallOrder_getCallSequence_Params) SetExpected(v uint32) {
 	s.Struct.SetUint32(0, v)
+}
+
+func (s CallOrder_getCallSequence_Params_B_) Expected(v uint32) CallOrder_getCallSequence_Params_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // CallOrder_getCallSequence_Params_List is a list of CallOrder_getCallSequence_Params.
@@ -514,6 +599,11 @@ func (p CallOrder_getCallSequence_Params_Promise) Struct() (CallOrder_getCallSeq
 
 type CallOrder_getCallSequence_Results struct{ capnp.Struct }
 
+type CallOrder_getCallSequence_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // CallOrder_getCallSequence_Results_TypeID is the unique identifier for the type CallOrder_getCallSequence_Results.
 const CallOrder_getCallSequence_Results_TypeID = 0x88f809ef7f873e58
 
@@ -537,12 +627,29 @@ func (s CallOrder_getCallSequence_Results) String() string {
 	return str
 }
 
+func (s CallOrder_getCallSequence_Results) Builder_() CallOrder_getCallSequence_Results_B_ {
+	return CallOrder_getCallSequence_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s CallOrder_getCallSequence_Results_B_) Reader_() (CallOrder_getCallSequence_Results, error) {
+	return CallOrder_getCallSequence_Results{Struct: s.Struct}, *s.Err
+}
 func (s CallOrder_getCallSequence_Results) N() uint32 {
 	return s.Struct.Uint32(0)
 }
 
 func (s CallOrder_getCallSequence_Results) SetN(v uint32) {
 	s.Struct.SetUint32(0, v)
+}
+
+func (s CallOrder_getCallSequence_Results_B_) N(v uint32) CallOrder_getCallSequence_Results_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // CallOrder_getCallSequence_Results_List is a list of CallOrder_getCallSequence_Results.
@@ -676,6 +783,11 @@ type Echoer_echo struct {
 
 type Echoer_echo_Params struct{ capnp.Struct }
 
+type Echoer_echo_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Echoer_echo_Params_TypeID is the unique identifier for the type Echoer_echo_Params.
 const Echoer_echo_Params_TypeID = 0xe96a45cad5d1a1d3
 
@@ -699,6 +811,16 @@ func (s Echoer_echo_Params) String() string {
 	return str
 }
 
+func (s Echoer_echo_Params) Builder_() Echoer_echo_Params_B_ {
+	return Echoer_echo_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Echoer_echo_Params_B_) Reader_() (Echoer_echo_Params, error) {
+	return Echoer_echo_Params{Struct: s.Struct}, *s.Err
+}
 func (s Echoer_echo_Params) Cap() CallOrder {
 	p, _ := s.Struct.Ptr(0)
 	return CallOrder{Client: p.Interface().Client()}
@@ -749,6 +871,11 @@ func (p Echoer_echo_Params_Promise) Cap() CallOrder {
 
 type Echoer_echo_Results struct{ capnp.Struct }
 
+type Echoer_echo_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Echoer_echo_Results_TypeID is the unique identifier for the type Echoer_echo_Results.
 const Echoer_echo_Results_TypeID = 0x8b45b4847bd839c8
 
@@ -772,6 +899,16 @@ func (s Echoer_echo_Results) String() string {
 	return str
 }
 
+func (s Echoer_echo_Results) Builder_() Echoer_echo_Results_B_ {
+	return Echoer_echo_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Echoer_echo_Results_B_) Reader_() (Echoer_echo_Results, error) {
+	return Echoer_echo_Results{Struct: s.Struct}, *s.Err
+}
 func (s Echoer_echo_Results) Cap() CallOrder {
 	p, _ := s.Struct.Ptr(0)
 	return CallOrder{Client: p.Interface().Client()}
@@ -888,6 +1025,11 @@ type PingPong_echoNum struct {
 
 type PingPong_echoNum_Params struct{ capnp.Struct }
 
+type PingPong_echoNum_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // PingPong_echoNum_Params_TypeID is the unique identifier for the type PingPong_echoNum_Params.
 const PingPong_echoNum_Params_TypeID = 0xd797e0a99edf0921
 
@@ -911,12 +1053,29 @@ func (s PingPong_echoNum_Params) String() string {
 	return str
 }
 
+func (s PingPong_echoNum_Params) Builder_() PingPong_echoNum_Params_B_ {
+	return PingPong_echoNum_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s PingPong_echoNum_Params_B_) Reader_() (PingPong_echoNum_Params, error) {
+	return PingPong_echoNum_Params{Struct: s.Struct}, *s.Err
+}
 func (s PingPong_echoNum_Params) N() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
 func (s PingPong_echoNum_Params) SetN(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s PingPong_echoNum_Params_B_) N(v int32) PingPong_echoNum_Params_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
 }
 
 // PingPong_echoNum_Params_List is a list of PingPong_echoNum_Params.
@@ -946,6 +1105,11 @@ func (p PingPong_echoNum_Params_Promise) Struct() (PingPong_echoNum_Params, erro
 
 type PingPong_echoNum_Results struct{ capnp.Struct }
 
+type PingPong_echoNum_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // PingPong_echoNum_Results_TypeID is the unique identifier for the type PingPong_echoNum_Results.
 const PingPong_echoNum_Results_TypeID = 0x85ddfd96db252600
 
@@ -969,12 +1133,29 @@ func (s PingPong_echoNum_Results) String() string {
 	return str
 }
 
+func (s PingPong_echoNum_Results) Builder_() PingPong_echoNum_Results_B_ {
+	return PingPong_echoNum_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s PingPong_echoNum_Results_B_) Reader_() (PingPong_echoNum_Results, error) {
+	return PingPong_echoNum_Results{Struct: s.Struct}, *s.Err
+}
 func (s PingPong_echoNum_Results) N() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
 func (s PingPong_echoNum_Results) SetN(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s PingPong_echoNum_Results_B_) N(v int32) PingPong_echoNum_Results_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
 }
 
 // PingPong_echoNum_Results_List is a list of PingPong_echoNum_Results.
@@ -1070,6 +1251,11 @@ type Adder_add struct {
 
 type Adder_add_Params struct{ capnp.Struct }
 
+type Adder_add_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Adder_add_Params_TypeID is the unique identifier for the type Adder_add_Params.
 const Adder_add_Params_TypeID = 0x9ed99eb5024ed6ef
 
@@ -1093,6 +1279,16 @@ func (s Adder_add_Params) String() string {
 	return str
 }
 
+func (s Adder_add_Params) Builder_() Adder_add_Params_B_ {
+	return Adder_add_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Adder_add_Params_B_) Reader_() (Adder_add_Params, error) {
+	return Adder_add_Params{Struct: s.Struct}, *s.Err
+}
 func (s Adder_add_Params) A() int32 {
 	return int32(s.Struct.Uint32(0))
 }
@@ -1101,12 +1297,25 @@ func (s Adder_add_Params) SetA(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
 }
 
+func (s Adder_add_Params_B_) A(v int32) Adder_add_Params_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
+}
 func (s Adder_add_Params) B() int32 {
 	return int32(s.Struct.Uint32(4))
 }
 
 func (s Adder_add_Params) SetB(v int32) {
 	s.Struct.SetUint32(4, uint32(v))
+}
+
+func (s Adder_add_Params_B_) B(v int32) Adder_add_Params_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(4, uint32(v))
+	}
+	return s
 }
 
 // Adder_add_Params_List is a list of Adder_add_Params.
@@ -1134,6 +1343,11 @@ func (p Adder_add_Params_Promise) Struct() (Adder_add_Params, error) {
 
 type Adder_add_Results struct{ capnp.Struct }
 
+type Adder_add_Results_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Adder_add_Results_TypeID is the unique identifier for the type Adder_add_Results.
 const Adder_add_Results_TypeID = 0xa74428796527f253
 
@@ -1157,12 +1371,29 @@ func (s Adder_add_Results) String() string {
 	return str
 }
 
+func (s Adder_add_Results) Builder_() Adder_add_Results_B_ {
+	return Adder_add_Results_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Adder_add_Results_B_) Reader_() (Adder_add_Results, error) {
+	return Adder_add_Results{Struct: s.Struct}, *s.Err
+}
 func (s Adder_add_Results) Result() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
 func (s Adder_add_Results) SetResult(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s Adder_add_Results_B_) Result(v int32) Adder_add_Results_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
 }
 
 // Adder_add_Results_List is a list of Adder_add_Results.

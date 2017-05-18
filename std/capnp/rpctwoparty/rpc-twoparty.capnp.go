@@ -67,6 +67,11 @@ func (l Side_List) Set(i int, v Side) {
 
 type VatId struct{ capnp.Struct }
 
+type VatId_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // VatId_TypeID is the unique identifier for the type VatId.
 const VatId_TypeID = 0xd20b909fee733a8e
 
@@ -90,12 +95,29 @@ func (s VatId) String() string {
 	return str
 }
 
+func (s VatId) Builder_() VatId_B_ {
+	return VatId_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s VatId_B_) Reader_() (VatId, error) {
+	return VatId{Struct: s.Struct}, *s.Err
+}
 func (s VatId) Side() Side {
 	return Side(s.Struct.Uint16(0))
 }
 
 func (s VatId) SetSide(v Side) {
 	s.Struct.SetUint16(0, uint16(v))
+}
+
+func (s VatId_B_) Side(v Side) VatId_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, uint16(v))
+	}
+	return s
 }
 
 // VatId_List is a list of VatId.
@@ -121,6 +143,11 @@ func (p VatId_Promise) Struct() (VatId, error) {
 
 type ProvisionId struct{ capnp.Struct }
 
+type ProvisionId_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // ProvisionId_TypeID is the unique identifier for the type ProvisionId.
 const ProvisionId_TypeID = 0xb88d09a9c5f39817
 
@@ -144,12 +171,29 @@ func (s ProvisionId) String() string {
 	return str
 }
 
+func (s ProvisionId) Builder_() ProvisionId_B_ {
+	return ProvisionId_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s ProvisionId_B_) Reader_() (ProvisionId, error) {
+	return ProvisionId{Struct: s.Struct}, *s.Err
+}
 func (s ProvisionId) JoinId() uint32 {
 	return s.Struct.Uint32(0)
 }
 
 func (s ProvisionId) SetJoinId(v uint32) {
 	s.Struct.SetUint32(0, v)
+}
+
+func (s ProvisionId_B_) JoinId(v uint32) ProvisionId_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // ProvisionId_List is a list of ProvisionId.
@@ -175,6 +219,11 @@ func (p ProvisionId_Promise) Struct() (ProvisionId, error) {
 
 type RecipientId struct{ capnp.Struct }
 
+type RecipientId_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // RecipientId_TypeID is the unique identifier for the type RecipientId.
 const RecipientId_TypeID = 0x89f389b6fd4082c1
 
@@ -196,6 +245,17 @@ func ReadRootRecipientId(msg *capnp.Message) (RecipientId, error) {
 func (s RecipientId) String() string {
 	str, _ := text.Marshal(0x89f389b6fd4082c1, s.Struct)
 	return str
+}
+
+func (s RecipientId) Builder_() RecipientId_B_ {
+	return RecipientId_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s RecipientId_B_) Reader_() (RecipientId, error) {
+	return RecipientId{Struct: s.Struct}, *s.Err
 }
 
 // RecipientId_List is a list of RecipientId.
@@ -221,6 +281,11 @@ func (p RecipientId_Promise) Struct() (RecipientId, error) {
 
 type ThirdPartyCapId struct{ capnp.Struct }
 
+type ThirdPartyCapId_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // ThirdPartyCapId_TypeID is the unique identifier for the type ThirdPartyCapId.
 const ThirdPartyCapId_TypeID = 0xb47f4979672cb59d
 
@@ -242,6 +307,17 @@ func ReadRootThirdPartyCapId(msg *capnp.Message) (ThirdPartyCapId, error) {
 func (s ThirdPartyCapId) String() string {
 	str, _ := text.Marshal(0xb47f4979672cb59d, s.Struct)
 	return str
+}
+
+func (s ThirdPartyCapId) Builder_() ThirdPartyCapId_B_ {
+	return ThirdPartyCapId_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s ThirdPartyCapId_B_) Reader_() (ThirdPartyCapId, error) {
+	return ThirdPartyCapId{Struct: s.Struct}, *s.Err
 }
 
 // ThirdPartyCapId_List is a list of ThirdPartyCapId.
@@ -269,6 +345,11 @@ func (p ThirdPartyCapId_Promise) Struct() (ThirdPartyCapId, error) {
 
 type JoinKeyPart struct{ capnp.Struct }
 
+type JoinKeyPart_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // JoinKeyPart_TypeID is the unique identifier for the type JoinKeyPart.
 const JoinKeyPart_TypeID = 0x95b29059097fca83
 
@@ -292,6 +373,16 @@ func (s JoinKeyPart) String() string {
 	return str
 }
 
+func (s JoinKeyPart) Builder_() JoinKeyPart_B_ {
+	return JoinKeyPart_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s JoinKeyPart_B_) Reader_() (JoinKeyPart, error) {
+	return JoinKeyPart{Struct: s.Struct}, *s.Err
+}
 func (s JoinKeyPart) JoinId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -300,6 +391,12 @@ func (s JoinKeyPart) SetJoinId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s JoinKeyPart_B_) JoinId(v uint32) JoinKeyPart_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s JoinKeyPart) PartCount() uint16 {
 	return s.Struct.Uint16(4)
 }
@@ -308,12 +405,25 @@ func (s JoinKeyPart) SetPartCount(v uint16) {
 	s.Struct.SetUint16(4, v)
 }
 
+func (s JoinKeyPart_B_) PartCount(v uint16) JoinKeyPart_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, v)
+	}
+	return s
+}
 func (s JoinKeyPart) PartNum() uint16 {
 	return s.Struct.Uint16(6)
 }
 
 func (s JoinKeyPart) SetPartNum(v uint16) {
 	s.Struct.SetUint16(6, v)
+}
+
+func (s JoinKeyPart_B_) PartNum(v uint16) JoinKeyPart_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(6, v)
+	}
+	return s
 }
 
 // JoinKeyPart_List is a list of JoinKeyPart.
@@ -339,6 +449,11 @@ func (p JoinKeyPart_Promise) Struct() (JoinKeyPart, error) {
 
 type JoinResult struct{ capnp.Struct }
 
+type JoinResult_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // JoinResult_TypeID is the unique identifier for the type JoinResult.
 const JoinResult_TypeID = 0x9d263a3630b7ebee
 
@@ -362,6 +477,16 @@ func (s JoinResult) String() string {
 	return str
 }
 
+func (s JoinResult) Builder_() JoinResult_B_ {
+	return JoinResult_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s JoinResult_B_) Reader_() (JoinResult, error) {
+	return JoinResult{Struct: s.Struct}, *s.Err
+}
 func (s JoinResult) JoinId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -370,6 +495,12 @@ func (s JoinResult) SetJoinId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s JoinResult_B_) JoinId(v uint32) JoinResult_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s JoinResult) Succeeded() bool {
 	return s.Struct.Bit(32)
 }
@@ -378,6 +509,12 @@ func (s JoinResult) SetSucceeded(v bool) {
 	s.Struct.SetBit(32, v)
 }
 
+func (s JoinResult_B_) Succeeded(v bool) JoinResult_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(32, v)
+	}
+	return s
+}
 func (s JoinResult) Cap() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }

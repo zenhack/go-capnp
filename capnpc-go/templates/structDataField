@@ -19,3 +19,15 @@ func (s {{.Node.Name}}) Set{{.Field.Name|title}}(v {{.FieldType}}) error {
 	return s.Struct.SetData({{.Field.Slot.Offset}}, v)
 }
 
+func (s {{.Node.Name}}_B_) {{.Field.Name|title}}(v {{.FieldType}}) {{.Node.Name}}_B_ {
+	if *s.Err == nil {
+		{{template "_settag" . -}}
+		{{if .Default -}}
+		if v == nil {
+			v = []byte{}
+		}
+		{{end -}}
+		*s.Err = s.Struct.SetData({{.Field.Slot.Offset}}, v)
+	}
+	return s
+}

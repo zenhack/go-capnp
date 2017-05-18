@@ -30,3 +30,26 @@ func (s {{.Node.Name}}) New{{.Field.Name|title}}() ({{.FieldType}}, error) {
 	return ss, err
 }
 
+func (s {{.Node.Name}}_B_) {{.Field.Name|title}}(v {{.FieldType}}) {{.Node.Name}}_B_ {
+	if *s.Err == nil {
+		{{template "_settag" . -}}
+		*s.Err = s.Struct.SetPtr({{.Field.Slot.Offset}}, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s {{.Node.Name}}_B_) New{{.Field.Name|title}}() {{.FieldType}}_B_ {
+	if s.Err != nil {
+		return {{.FieldType}}_B_{Err: s.Err}
+	}
+	ss, err := {{.G.RemoteNodeNew .TypeNode .Node}}(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return {{.FieldType}}_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr({{.Field.Slot.Offset}}, ss.Struct.ToPtr())
+	return {{.FieldType}}_B_{
+		Struct: ss.Struct,
+		Err: s.Err,
+	}
+}

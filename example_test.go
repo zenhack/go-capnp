@@ -33,26 +33,19 @@ func Example() {
 	}
 
 	// then non-root objects:
-	aircraft, err := z.NewAircraft()
+	planebase, err := z.Builder_().NewAircraft().NewB737().NewBase().
+		// Set primitive fields
+		CanFly(true).
+		Name("Henrietta").
+		Rating(100).
+		MaxSpeed(876). // km/hr
+		// if we don't set capacity, it will get the default value, in this case 0.
+		//planebase.SetCapacity(26020) // Liters fuel
+		Reader_()
+	// Errors anywhere in the process are reported when converting to a reader:
 	if err != nil {
 		panic(err)
 	}
-	b737, err := aircraft.NewB737()
-	if err != nil {
-		panic(err)
-	}
-	planebase, err := b737.NewBase()
-	if err != nil {
-		panic(err)
-	}
-
-	// Set primitive fields
-	planebase.SetCanFly(true)
-	planebase.SetName("Henrietta")
-	planebase.SetRating(100)
-	planebase.SetMaxSpeed(876) // km/hr
-	// if we don't set capacity, it will get the default value, in this case 0.
-	//planebase.SetCapacity(26020) // Liters fuel
 
 	// Creating a list
 	homes, err := planebase.NewHomes(2)
@@ -95,9 +88,7 @@ func ExampleUnmarshal() {
 		fmt.Printf("root error %v\n", err)
 		return
 	}
-	d.SetYear(2004)
-	d.SetMonth(12)
-	d.SetDay(7)
+	d.Builder_().Year(2004).Month(12).Day(7)
 	data, err := msg.Marshal()
 	if err != nil {
 		fmt.Printf("marshal error %v\n", err)

@@ -12,6 +12,11 @@ import (
 )
 
 type Message struct{ capnp.Struct }
+
+type Message_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Message_Which uint16
 
 const (
@@ -90,6 +95,17 @@ func (s Message) String() string {
 	return str
 }
 
+func (s Message) Builder_() Message_B_ {
+	return Message_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Message_B_) Reader_() (Message, error) {
+	return Message{Struct: s.Struct}, *s.Err
+}
+
 func (s Message) Which() Message_Which {
 	return Message_Which(s.Struct.Uint16(0))
 }
@@ -123,6 +139,29 @@ func (s Message) NewUnimplemented() (Message, error) {
 	return ss, err
 }
 
+func (s Message_B_) Unimplemented(v Message) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 0)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewUnimplemented() Message_B_ {
+	if s.Err != nil {
+		return Message_B_{Err: s.Err}
+	}
+	ss, err := NewMessage(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Message_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Message_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Abort() (Exception, error) {
 	p, err := s.Struct.Ptr(0)
 	return Exception{Struct: p.Struct()}, err
@@ -153,6 +192,29 @@ func (s Message) NewAbort() (Exception, error) {
 	return ss, err
 }
 
+func (s Message_B_) Abort(v Exception) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewAbort() Exception_B_ {
+	if s.Err != nil {
+		return Exception_B_{Err: s.Err}
+	}
+	ss, err := NewException(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Exception_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Exception_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Bootstrap() (Bootstrap, error) {
 	p, err := s.Struct.Ptr(0)
 	return Bootstrap{Struct: p.Struct()}, err
@@ -183,6 +245,29 @@ func (s Message) NewBootstrap() (Bootstrap, error) {
 	return ss, err
 }
 
+func (s Message_B_) Bootstrap(v Bootstrap) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 8)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewBootstrap() Bootstrap_B_ {
+	if s.Err != nil {
+		return Bootstrap_B_{Err: s.Err}
+	}
+	ss, err := NewBootstrap(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Bootstrap_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Bootstrap_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Call() (Call, error) {
 	p, err := s.Struct.Ptr(0)
 	return Call{Struct: p.Struct()}, err
@@ -213,6 +298,29 @@ func (s Message) NewCall() (Call, error) {
 	return ss, err
 }
 
+func (s Message_B_) Call(v Call) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 2)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewCall() Call_B_ {
+	if s.Err != nil {
+		return Call_B_{Err: s.Err}
+	}
+	ss, err := NewCall(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Call_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Call_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Return() (Return, error) {
 	p, err := s.Struct.Ptr(0)
 	return Return{Struct: p.Struct()}, err
@@ -243,6 +351,29 @@ func (s Message) NewReturn() (Return, error) {
 	return ss, err
 }
 
+func (s Message_B_) Return(v Return) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 3)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewReturn() Return_B_ {
+	if s.Err != nil {
+		return Return_B_{Err: s.Err}
+	}
+	ss, err := NewReturn(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Return_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Return_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Finish() (Finish, error) {
 	p, err := s.Struct.Ptr(0)
 	return Finish{Struct: p.Struct()}, err
@@ -273,6 +404,29 @@ func (s Message) NewFinish() (Finish, error) {
 	return ss, err
 }
 
+func (s Message_B_) Finish(v Finish) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 4)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewFinish() Finish_B_ {
+	if s.Err != nil {
+		return Finish_B_{Err: s.Err}
+	}
+	ss, err := NewFinish(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Finish_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Finish_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Resolve() (Resolve, error) {
 	p, err := s.Struct.Ptr(0)
 	return Resolve{Struct: p.Struct()}, err
@@ -303,6 +457,29 @@ func (s Message) NewResolve() (Resolve, error) {
 	return ss, err
 }
 
+func (s Message_B_) Resolve(v Resolve) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 5)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewResolve() Resolve_B_ {
+	if s.Err != nil {
+		return Resolve_B_{Err: s.Err}
+	}
+	ss, err := NewResolve(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Resolve_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Resolve_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Release() (Release, error) {
 	p, err := s.Struct.Ptr(0)
 	return Release{Struct: p.Struct()}, err
@@ -333,6 +510,29 @@ func (s Message) NewRelease() (Release, error) {
 	return ss, err
 }
 
+func (s Message_B_) Release(v Release) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 6)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewRelease() Release_B_ {
+	if s.Err != nil {
+		return Release_B_{Err: s.Err}
+	}
+	ss, err := NewRelease(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Release_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Release_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Disembargo() (Disembargo, error) {
 	p, err := s.Struct.Ptr(0)
 	return Disembargo{Struct: p.Struct()}, err
@@ -363,6 +563,29 @@ func (s Message) NewDisembargo() (Disembargo, error) {
 	return ss, err
 }
 
+func (s Message_B_) Disembargo(v Disembargo) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 13)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewDisembargo() Disembargo_B_ {
+	if s.Err != nil {
+		return Disembargo_B_{Err: s.Err}
+	}
+	ss, err := NewDisembargo(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Disembargo_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Disembargo_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) ObsoleteSave() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -427,6 +650,29 @@ func (s Message) NewProvide() (Provide, error) {
 	return ss, err
 }
 
+func (s Message_B_) Provide(v Provide) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 10)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewProvide() Provide_B_ {
+	if s.Err != nil {
+		return Provide_B_{Err: s.Err}
+	}
+	ss, err := NewProvide(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Provide_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Provide_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Accept() (Accept, error) {
 	p, err := s.Struct.Ptr(0)
 	return Accept{Struct: p.Struct()}, err
@@ -457,6 +703,29 @@ func (s Message) NewAccept() (Accept, error) {
 	return ss, err
 }
 
+func (s Message_B_) Accept(v Accept) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 11)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewAccept() Accept_B_ {
+	if s.Err != nil {
+		return Accept_B_{Err: s.Err}
+	}
+	ss, err := NewAccept(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Accept_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Accept_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Message) Join() (Join, error) {
 	p, err := s.Struct.Ptr(0)
 	return Join{Struct: p.Struct()}, err
@@ -485,6 +754,30 @@ func (s Message) NewJoin() (Join, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Message_B_) Join(v Join) Message_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 12)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Message_B_) NewJoin() Join_B_ {
+	if s.Err != nil {
+		return Join_B_{Err: s.Err}
+	}
+	ss, err := NewJoin(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Join_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Join_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Message_List is a list of Message.
@@ -566,6 +859,11 @@ func (p Message_Promise) Join() Join_Promise {
 
 type Bootstrap struct{ capnp.Struct }
 
+type Bootstrap_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Bootstrap_TypeID is the unique identifier for the type Bootstrap.
 const Bootstrap_TypeID = 0xe94ccf8031176ec4
 
@@ -589,6 +887,16 @@ func (s Bootstrap) String() string {
 	return str
 }
 
+func (s Bootstrap) Builder_() Bootstrap_B_ {
+	return Bootstrap_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Bootstrap_B_) Reader_() (Bootstrap, error) {
+	return Bootstrap{Struct: s.Struct}, *s.Err
+}
 func (s Bootstrap) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -597,6 +905,12 @@ func (s Bootstrap) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Bootstrap_B_) QuestionId(v uint32) Bootstrap_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Bootstrap) DeprecatedObjectId() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -636,7 +950,14 @@ func (p Bootstrap_Promise) DeprecatedObjectId() *capnp.Pipeline {
 }
 
 type Call struct{ capnp.Struct }
+
+type Call_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Call_sendResultsTo Call
+
+type Call_sendResultsTo_B_ Call_B_
 type Call_sendResultsTo_Which uint16
 
 const (
@@ -682,6 +1003,16 @@ func (s Call) String() string {
 	return str
 }
 
+func (s Call) Builder_() Call_B_ {
+	return Call_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Call_B_) Reader_() (Call, error) {
+	return Call{Struct: s.Struct}, *s.Err
+}
 func (s Call) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -690,6 +1021,12 @@ func (s Call) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Call_B_) QuestionId(v uint32) Call_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Call) Target() (MessageTarget, error) {
 	p, err := s.Struct.Ptr(0)
 	return MessageTarget{Struct: p.Struct()}, err
@@ -715,6 +1052,28 @@ func (s Call) NewTarget() (MessageTarget, error) {
 	return ss, err
 }
 
+func (s Call_B_) Target(v MessageTarget) Call_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Call_B_) NewTarget() MessageTarget_B_ {
+	if s.Err != nil {
+		return MessageTarget_B_{Err: s.Err}
+	}
+	ss, err := NewMessageTarget(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return MessageTarget_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return MessageTarget_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Call) InterfaceId() uint64 {
 	return s.Struct.Uint64(8)
 }
@@ -723,6 +1082,12 @@ func (s Call) SetInterfaceId(v uint64) {
 	s.Struct.SetUint64(8, v)
 }
 
+func (s Call_B_) InterfaceId(v uint64) Call_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint64(8, v)
+	}
+	return s
+}
 func (s Call) MethodId() uint16 {
 	return s.Struct.Uint16(4)
 }
@@ -731,6 +1096,12 @@ func (s Call) SetMethodId(v uint16) {
 	s.Struct.SetUint16(4, v)
 }
 
+func (s Call_B_) MethodId(v uint16) Call_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, v)
+	}
+	return s
+}
 func (s Call) AllowThirdPartyTailCall() bool {
 	return s.Struct.Bit(128)
 }
@@ -739,6 +1110,12 @@ func (s Call) SetAllowThirdPartyTailCall(v bool) {
 	s.Struct.SetBit(128, v)
 }
 
+func (s Call_B_) AllowThirdPartyTailCall(v bool) Call_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(128, v)
+	}
+	return s
+}
 func (s Call) Params() (Payload, error) {
 	p, err := s.Struct.Ptr(1)
 	return Payload{Struct: p.Struct()}, err
@@ -764,6 +1141,28 @@ func (s Call) NewParams() (Payload, error) {
 	return ss, err
 }
 
+func (s Call_B_) Params(v Payload) Call_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Call_B_) NewParams() Payload_B_ {
+	if s.Err != nil {
+		return Payload_B_{Err: s.Err}
+	}
+	ss, err := NewPayload(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Payload_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return Payload_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Call) SendResultsTo() Call_sendResultsTo { return Call_sendResultsTo(s) }
 
 func (s Call_sendResultsTo) Which() Call_sendResultsTo_Which {
@@ -842,6 +1241,11 @@ func (p Call_sendResultsTo_Promise) ThirdParty() *capnp.Pipeline {
 }
 
 type Return struct{ capnp.Struct }
+
+type Return_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Return_Which uint16
 
 const (
@@ -896,6 +1300,17 @@ func (s Return) String() string {
 	return str
 }
 
+func (s Return) Builder_() Return_B_ {
+	return Return_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Return_B_) Reader_() (Return, error) {
+	return Return{Struct: s.Struct}, *s.Err
+}
+
 func (s Return) Which() Return_Which {
 	return Return_Which(s.Struct.Uint16(6))
 }
@@ -907,6 +1322,12 @@ func (s Return) SetAnswerId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Return_B_) AnswerId(v uint32) Return_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Return) ReleaseParamCaps() bool {
 	return !s.Struct.Bit(32)
 }
@@ -915,6 +1336,12 @@ func (s Return) SetReleaseParamCaps(v bool) {
 	s.Struct.SetBit(32, !v)
 }
 
+func (s Return_B_) ReleaseParamCaps(v bool) Return_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(32, !v)
+	}
+	return s
+}
 func (s Return) Results() (Payload, error) {
 	p, err := s.Struct.Ptr(0)
 	return Payload{Struct: p.Struct()}, err
@@ -945,6 +1372,29 @@ func (s Return) NewResults() (Payload, error) {
 	return ss, err
 }
 
+func (s Return_B_) Results(v Payload) Return_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(6, 0)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Return_B_) NewResults() Payload_B_ {
+	if s.Err != nil {
+		return Payload_B_{Err: s.Err}
+	}
+	ss, err := NewPayload(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Payload_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Payload_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Return) Exception() (Exception, error) {
 	p, err := s.Struct.Ptr(0)
 	return Exception{Struct: p.Struct()}, err
@@ -975,6 +1425,29 @@ func (s Return) NewException() (Exception, error) {
 	return ss, err
 }
 
+func (s Return_B_) Exception(v Exception) Return_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(6, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Return_B_) NewException() Exception_B_ {
+	if s.Err != nil {
+		return Exception_B_{Err: s.Err}
+	}
+	ss, err := NewException(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Exception_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Exception_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Return) SetCanceled() {
 	s.Struct.SetUint16(6, 2)
 
@@ -994,6 +1467,13 @@ func (s Return) SetTakeFromOtherQuestion(v uint32) {
 	s.Struct.SetUint32(8, v)
 }
 
+func (s Return_B_) TakeFromOtherQuestion(v uint32) Return_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(6, 4)
+		s.Struct.SetUint32(8, v)
+	}
+	return s
+}
 func (s Return) AcceptFromThirdParty() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -1046,6 +1526,11 @@ func (p Return_Promise) AcceptFromThirdParty() *capnp.Pipeline {
 
 type Finish struct{ capnp.Struct }
 
+type Finish_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Finish_TypeID is the unique identifier for the type Finish.
 const Finish_TypeID = 0xd37d2eb2c2f80e63
 
@@ -1069,6 +1554,16 @@ func (s Finish) String() string {
 	return str
 }
 
+func (s Finish) Builder_() Finish_B_ {
+	return Finish_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Finish_B_) Reader_() (Finish, error) {
+	return Finish{Struct: s.Struct}, *s.Err
+}
 func (s Finish) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1077,12 +1572,25 @@ func (s Finish) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Finish_B_) QuestionId(v uint32) Finish_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Finish) ReleaseResultCaps() bool {
 	return !s.Struct.Bit(32)
 }
 
 func (s Finish) SetReleaseResultCaps(v bool) {
 	s.Struct.SetBit(32, !v)
+}
+
+func (s Finish_B_) ReleaseResultCaps(v bool) Finish_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(32, !v)
+	}
+	return s
 }
 
 // Finish_List is a list of Finish.
@@ -1107,6 +1615,11 @@ func (p Finish_Promise) Struct() (Finish, error) {
 }
 
 type Resolve struct{ capnp.Struct }
+
+type Resolve_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Resolve_Which uint16
 
 const (
@@ -1149,6 +1662,17 @@ func (s Resolve) String() string {
 	return str
 }
 
+func (s Resolve) Builder_() Resolve_B_ {
+	return Resolve_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Resolve_B_) Reader_() (Resolve, error) {
+	return Resolve{Struct: s.Struct}, *s.Err
+}
+
 func (s Resolve) Which() Resolve_Which {
 	return Resolve_Which(s.Struct.Uint16(4))
 }
@@ -1160,6 +1684,12 @@ func (s Resolve) SetPromiseId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Resolve_B_) PromiseId(v uint32) Resolve_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Resolve) Cap() (CapDescriptor, error) {
 	p, err := s.Struct.Ptr(0)
 	return CapDescriptor{Struct: p.Struct()}, err
@@ -1190,6 +1720,29 @@ func (s Resolve) NewCap() (CapDescriptor, error) {
 	return ss, err
 }
 
+func (s Resolve_B_) Cap(v CapDescriptor) Resolve_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 0)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Resolve_B_) NewCap() CapDescriptor_B_ {
+	if s.Err != nil {
+		return CapDescriptor_B_{Err: s.Err}
+	}
+	ss, err := NewCapDescriptor(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return CapDescriptor_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return CapDescriptor_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Resolve) Exception() (Exception, error) {
 	p, err := s.Struct.Ptr(0)
 	return Exception{Struct: p.Struct()}, err
@@ -1218,6 +1771,30 @@ func (s Resolve) NewException() (Exception, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s Resolve_B_) Exception(v Exception) Resolve_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Resolve_B_) NewException() Exception_B_ {
+	if s.Err != nil {
+		return Exception_B_{Err: s.Err}
+	}
+	ss, err := NewException(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Exception_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return Exception_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // Resolve_List is a list of Resolve.
@@ -1251,6 +1828,11 @@ func (p Resolve_Promise) Exception() Exception_Promise {
 
 type Release struct{ capnp.Struct }
 
+type Release_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Release_TypeID is the unique identifier for the type Release.
 const Release_TypeID = 0xad1a6c0d7dd07497
 
@@ -1274,6 +1856,16 @@ func (s Release) String() string {
 	return str
 }
 
+func (s Release) Builder_() Release_B_ {
+	return Release_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Release_B_) Reader_() (Release, error) {
+	return Release{Struct: s.Struct}, *s.Err
+}
 func (s Release) Id() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1282,12 +1874,25 @@ func (s Release) SetId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Release_B_) Id(v uint32) Release_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Release) ReferenceCount() uint32 {
 	return s.Struct.Uint32(4)
 }
 
 func (s Release) SetReferenceCount(v uint32) {
 	s.Struct.SetUint32(4, v)
+}
+
+func (s Release_B_) ReferenceCount(v uint32) Release_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(4, v)
+	}
+	return s
 }
 
 // Release_List is a list of Release.
@@ -1312,7 +1917,14 @@ func (p Release_Promise) Struct() (Release, error) {
 }
 
 type Disembargo struct{ capnp.Struct }
+
+type Disembargo_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type Disembargo_context Disembargo
+
+type Disembargo_context_B_ Disembargo_B_
 type Disembargo_context_Which uint16
 
 const (
@@ -1361,6 +1973,16 @@ func (s Disembargo) String() string {
 	return str
 }
 
+func (s Disembargo) Builder_() Disembargo_B_ {
+	return Disembargo_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Disembargo_B_) Reader_() (Disembargo, error) {
+	return Disembargo{Struct: s.Struct}, *s.Err
+}
 func (s Disembargo) Target() (MessageTarget, error) {
 	p, err := s.Struct.Ptr(0)
 	return MessageTarget{Struct: p.Struct()}, err
@@ -1386,6 +2008,28 @@ func (s Disembargo) NewTarget() (MessageTarget, error) {
 	return ss, err
 }
 
+func (s Disembargo_B_) Target(v MessageTarget) Disembargo_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Disembargo_B_) NewTarget() MessageTarget_B_ {
+	if s.Err != nil {
+		return MessageTarget_B_{Err: s.Err}
+	}
+	ss, err := NewMessageTarget(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return MessageTarget_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return MessageTarget_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Disembargo) Context() Disembargo_context { return Disembargo_context(s) }
 
 func (s Disembargo_context) Which() Disembargo_context_Which {
@@ -1400,6 +2044,13 @@ func (s Disembargo_context) SetSenderLoopback(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Disembargo_context_B_) SenderLoopback(v uint32) Disembargo_context_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 0)
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Disembargo_context) ReceiverLoopback() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1409,6 +2060,13 @@ func (s Disembargo_context) SetReceiverLoopback(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Disembargo_context_B_) ReceiverLoopback(v uint32) Disembargo_context_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 1)
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Disembargo_context) SetAccept() {
 	s.Struct.SetUint16(4, 2)
 
@@ -1421,6 +2079,14 @@ func (s Disembargo_context) Provide() uint32 {
 func (s Disembargo_context) SetProvide(v uint32) {
 	s.Struct.SetUint16(4, 3)
 	s.Struct.SetUint32(0, v)
+}
+
+func (s Disembargo_context_B_) Provide(v uint32) Disembargo_context_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 3)
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // Disembargo_List is a list of Disembargo.
@@ -1462,6 +2128,11 @@ func (p Disembargo_context_Promise) Struct() (Disembargo_context, error) {
 
 type Provide struct{ capnp.Struct }
 
+type Provide_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Provide_TypeID is the unique identifier for the type Provide.
 const Provide_TypeID = 0x9c6a046bfbc1ac5a
 
@@ -1485,6 +2156,16 @@ func (s Provide) String() string {
 	return str
 }
 
+func (s Provide) Builder_() Provide_B_ {
+	return Provide_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Provide_B_) Reader_() (Provide, error) {
+	return Provide{Struct: s.Struct}, *s.Err
+}
 func (s Provide) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1493,6 +2174,12 @@ func (s Provide) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Provide_B_) QuestionId(v uint32) Provide_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Provide) Target() (MessageTarget, error) {
 	p, err := s.Struct.Ptr(0)
 	return MessageTarget{Struct: p.Struct()}, err
@@ -1518,6 +2205,28 @@ func (s Provide) NewTarget() (MessageTarget, error) {
 	return ss, err
 }
 
+func (s Provide_B_) Target(v MessageTarget) Provide_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Provide_B_) NewTarget() MessageTarget_B_ {
+	if s.Err != nil {
+		return MessageTarget_B_{Err: s.Err}
+	}
+	ss, err := NewMessageTarget(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return MessageTarget_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return MessageTarget_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Provide) Recipient() (capnp.Ptr, error) {
 	return s.Struct.Ptr(1)
 }
@@ -1562,6 +2271,11 @@ func (p Provide_Promise) Recipient() *capnp.Pipeline {
 
 type Accept struct{ capnp.Struct }
 
+type Accept_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Accept_TypeID is the unique identifier for the type Accept.
 const Accept_TypeID = 0xd4c9b56290554016
 
@@ -1585,6 +2299,16 @@ func (s Accept) String() string {
 	return str
 }
 
+func (s Accept) Builder_() Accept_B_ {
+	return Accept_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Accept_B_) Reader_() (Accept, error) {
+	return Accept{Struct: s.Struct}, *s.Err
+}
 func (s Accept) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1593,6 +2317,12 @@ func (s Accept) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Accept_B_) QuestionId(v uint32) Accept_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Accept) Provision() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -1612,6 +2342,13 @@ func (s Accept) Embargo() bool {
 
 func (s Accept) SetEmbargo(v bool) {
 	s.Struct.SetBit(32, v)
+}
+
+func (s Accept_B_) Embargo(v bool) Accept_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(32, v)
+	}
+	return s
 }
 
 // Accept_List is a list of Accept.
@@ -1641,6 +2378,11 @@ func (p Accept_Promise) Provision() *capnp.Pipeline {
 
 type Join struct{ capnp.Struct }
 
+type Join_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Join_TypeID is the unique identifier for the type Join.
 const Join_TypeID = 0xfbe1980490e001af
 
@@ -1664,6 +2406,16 @@ func (s Join) String() string {
 	return str
 }
 
+func (s Join) Builder_() Join_B_ {
+	return Join_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Join_B_) Reader_() (Join, error) {
+	return Join{Struct: s.Struct}, *s.Err
+}
 func (s Join) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -1672,6 +2424,12 @@ func (s Join) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s Join_B_) QuestionId(v uint32) Join_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s Join) Target() (MessageTarget, error) {
 	p, err := s.Struct.Ptr(0)
 	return MessageTarget{Struct: p.Struct()}, err
@@ -1697,6 +2455,28 @@ func (s Join) NewTarget() (MessageTarget, error) {
 	return ss, err
 }
 
+func (s Join_B_) Target(v MessageTarget) Join_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s Join_B_) NewTarget() MessageTarget_B_ {
+	if s.Err != nil {
+		return MessageTarget_B_{Err: s.Err}
+	}
+	ss, err := NewMessageTarget(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return MessageTarget_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return MessageTarget_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s Join) KeyPart() (capnp.Ptr, error) {
 	return s.Struct.Ptr(1)
 }
@@ -1740,6 +2520,11 @@ func (p Join_Promise) KeyPart() *capnp.Pipeline {
 }
 
 type MessageTarget struct{ capnp.Struct }
+
+type MessageTarget_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type MessageTarget_Which uint16
 
 const (
@@ -1782,6 +2567,17 @@ func (s MessageTarget) String() string {
 	return str
 }
 
+func (s MessageTarget) Builder_() MessageTarget_B_ {
+	return MessageTarget_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s MessageTarget_B_) Reader_() (MessageTarget, error) {
+	return MessageTarget{Struct: s.Struct}, *s.Err
+}
+
 func (s MessageTarget) Which() MessageTarget_Which {
 	return MessageTarget_Which(s.Struct.Uint16(4))
 }
@@ -1794,6 +2590,13 @@ func (s MessageTarget) SetImportedCap(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s MessageTarget_B_) ImportedCap(v uint32) MessageTarget_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 0)
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s MessageTarget) PromisedAnswer() (PromisedAnswer, error) {
 	p, err := s.Struct.Ptr(0)
 	return PromisedAnswer{Struct: p.Struct()}, err
@@ -1824,6 +2627,30 @@ func (s MessageTarget) NewPromisedAnswer() (PromisedAnswer, error) {
 	return ss, err
 }
 
+func (s MessageTarget_B_) PromisedAnswer(v PromisedAnswer) MessageTarget_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, 1)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s MessageTarget_B_) NewPromisedAnswer() PromisedAnswer_B_ {
+	if s.Err != nil {
+		return PromisedAnswer_B_{Err: s.Err}
+	}
+	ss, err := NewPromisedAnswer(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PromisedAnswer_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PromisedAnswer_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
+
 // MessageTarget_List is a list of MessageTarget.
 type MessageTarget_List struct{ capnp.List }
 
@@ -1851,6 +2678,11 @@ func (p MessageTarget_Promise) PromisedAnswer() PromisedAnswer_Promise {
 
 type Payload struct{ capnp.Struct }
 
+type Payload_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Payload_TypeID is the unique identifier for the type Payload.
 const Payload_TypeID = 0x9a0e61223d96743b
 
@@ -1874,6 +2706,16 @@ func (s Payload) String() string {
 	return str
 }
 
+func (s Payload) Builder_() Payload_B_ {
+	return Payload_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Payload_B_) Reader_() (Payload, error) {
+	return Payload{Struct: s.Struct}, *s.Err
+}
 func (s Payload) Content() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -1938,6 +2780,11 @@ func (p Payload_Promise) Content() *capnp.Pipeline {
 }
 
 type CapDescriptor struct{ capnp.Struct }
+
+type CapDescriptor_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type CapDescriptor_Which uint16
 
 const (
@@ -1992,6 +2839,17 @@ func (s CapDescriptor) String() string {
 	return str
 }
 
+func (s CapDescriptor) Builder_() CapDescriptor_B_ {
+	return CapDescriptor_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s CapDescriptor_B_) Reader_() (CapDescriptor, error) {
+	return CapDescriptor{Struct: s.Struct}, *s.Err
+}
+
 func (s CapDescriptor) Which() CapDescriptor_Which {
 	return CapDescriptor_Which(s.Struct.Uint16(0))
 }
@@ -2009,6 +2867,13 @@ func (s CapDescriptor) SetSenderHosted(v uint32) {
 	s.Struct.SetUint32(4, v)
 }
 
+func (s CapDescriptor_B_) SenderHosted(v uint32) CapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		s.Struct.SetUint32(4, v)
+	}
+	return s
+}
 func (s CapDescriptor) SenderPromise() uint32 {
 	return s.Struct.Uint32(4)
 }
@@ -2018,6 +2883,13 @@ func (s CapDescriptor) SetSenderPromise(v uint32) {
 	s.Struct.SetUint32(4, v)
 }
 
+func (s CapDescriptor_B_) SenderPromise(v uint32) CapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 2)
+		s.Struct.SetUint32(4, v)
+	}
+	return s
+}
 func (s CapDescriptor) ReceiverHosted() uint32 {
 	return s.Struct.Uint32(4)
 }
@@ -2027,6 +2899,13 @@ func (s CapDescriptor) SetReceiverHosted(v uint32) {
 	s.Struct.SetUint32(4, v)
 }
 
+func (s CapDescriptor_B_) ReceiverHosted(v uint32) CapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 3)
+		s.Struct.SetUint32(4, v)
+	}
+	return s
+}
 func (s CapDescriptor) ReceiverAnswer() (PromisedAnswer, error) {
 	p, err := s.Struct.Ptr(0)
 	return PromisedAnswer{Struct: p.Struct()}, err
@@ -2057,6 +2936,29 @@ func (s CapDescriptor) NewReceiverAnswer() (PromisedAnswer, error) {
 	return ss, err
 }
 
+func (s CapDescriptor_B_) ReceiverAnswer(v PromisedAnswer) CapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 4)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s CapDescriptor_B_) NewReceiverAnswer() PromisedAnswer_B_ {
+	if s.Err != nil {
+		return PromisedAnswer_B_{Err: s.Err}
+	}
+	ss, err := NewPromisedAnswer(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return PromisedAnswer_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return PromisedAnswer_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
 func (s CapDescriptor) ThirdPartyHosted() (ThirdPartyCapDescriptor, error) {
 	p, err := s.Struct.Ptr(0)
 	return ThirdPartyCapDescriptor{Struct: p.Struct()}, err
@@ -2085,6 +2987,30 @@ func (s CapDescriptor) NewThirdPartyHosted() (ThirdPartyCapDescriptor, error) {
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s CapDescriptor_B_) ThirdPartyHosted(v ThirdPartyCapDescriptor) CapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 5)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s CapDescriptor_B_) NewThirdPartyHosted() ThirdPartyCapDescriptor_B_ {
+	if s.Err != nil {
+		return ThirdPartyCapDescriptor_B_{Err: s.Err}
+	}
+	ss, err := NewThirdPartyCapDescriptor(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return ThirdPartyCapDescriptor_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ThirdPartyCapDescriptor_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // CapDescriptor_List is a list of CapDescriptor.
@@ -2118,6 +3044,11 @@ func (p CapDescriptor_Promise) ThirdPartyHosted() ThirdPartyCapDescriptor_Promis
 
 type PromisedAnswer struct{ capnp.Struct }
 
+type PromisedAnswer_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // PromisedAnswer_TypeID is the unique identifier for the type PromisedAnswer.
 const PromisedAnswer_TypeID = 0xd800b1d6cd6f1ca0
 
@@ -2141,6 +3072,16 @@ func (s PromisedAnswer) String() string {
 	return str
 }
 
+func (s PromisedAnswer) Builder_() PromisedAnswer_B_ {
+	return PromisedAnswer_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s PromisedAnswer_B_) Reader_() (PromisedAnswer, error) {
+	return PromisedAnswer{Struct: s.Struct}, *s.Err
+}
 func (s PromisedAnswer) QuestionId() uint32 {
 	return s.Struct.Uint32(0)
 }
@@ -2149,6 +3090,12 @@ func (s PromisedAnswer) SetQuestionId(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
+func (s PromisedAnswer_B_) QuestionId(v uint32) PromisedAnswer_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
+}
 func (s PromisedAnswer) Transform() (PromisedAnswer_Op_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return PromisedAnswer_Op_List{List: p.List()}, err
@@ -2196,6 +3143,11 @@ func (p PromisedAnswer_Promise) Struct() (PromisedAnswer, error) {
 }
 
 type PromisedAnswer_Op struct{ capnp.Struct }
+
+type PromisedAnswer_Op_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type PromisedAnswer_Op_Which uint16
 
 const (
@@ -2238,6 +3190,17 @@ func (s PromisedAnswer_Op) String() string {
 	return str
 }
 
+func (s PromisedAnswer_Op) Builder_() PromisedAnswer_Op_B_ {
+	return PromisedAnswer_Op_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s PromisedAnswer_Op_B_) Reader_() (PromisedAnswer_Op, error) {
+	return PromisedAnswer_Op{Struct: s.Struct}, *s.Err
+}
+
 func (s PromisedAnswer_Op) Which() PromisedAnswer_Op_Which {
 	return PromisedAnswer_Op_Which(s.Struct.Uint16(0))
 }
@@ -2253,6 +3216,14 @@ func (s PromisedAnswer_Op) GetPointerField() uint16 {
 func (s PromisedAnswer_Op) SetGetPointerField(v uint16) {
 	s.Struct.SetUint16(0, 1)
 	s.Struct.SetUint16(2, v)
+}
+
+func (s PromisedAnswer_Op_B_) GetPointerField(v uint16) PromisedAnswer_Op_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		s.Struct.SetUint16(2, v)
+	}
+	return s
 }
 
 // PromisedAnswer_Op_List is a list of PromisedAnswer_Op.
@@ -2282,6 +3253,11 @@ func (p PromisedAnswer_Op_Promise) Struct() (PromisedAnswer_Op, error) {
 
 type ThirdPartyCapDescriptor struct{ capnp.Struct }
 
+type ThirdPartyCapDescriptor_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // ThirdPartyCapDescriptor_TypeID is the unique identifier for the type ThirdPartyCapDescriptor.
 const ThirdPartyCapDescriptor_TypeID = 0xd37007fde1f0027d
 
@@ -2305,6 +3281,16 @@ func (s ThirdPartyCapDescriptor) String() string {
 	return str
 }
 
+func (s ThirdPartyCapDescriptor) Builder_() ThirdPartyCapDescriptor_B_ {
+	return ThirdPartyCapDescriptor_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s ThirdPartyCapDescriptor_B_) Reader_() (ThirdPartyCapDescriptor, error) {
+	return ThirdPartyCapDescriptor{Struct: s.Struct}, *s.Err
+}
 func (s ThirdPartyCapDescriptor) Id() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -2324,6 +3310,13 @@ func (s ThirdPartyCapDescriptor) VineId() uint32 {
 
 func (s ThirdPartyCapDescriptor) SetVineId(v uint32) {
 	s.Struct.SetUint32(0, v)
+}
+
+func (s ThirdPartyCapDescriptor_B_) VineId(v uint32) ThirdPartyCapDescriptor_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, v)
+	}
+	return s
 }
 
 // ThirdPartyCapDescriptor_List is a list of ThirdPartyCapDescriptor.
@@ -2357,6 +3350,11 @@ func (p ThirdPartyCapDescriptor_Promise) Id() *capnp.Pipeline {
 
 type Exception struct{ capnp.Struct }
 
+type Exception_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Exception_TypeID is the unique identifier for the type Exception.
 const Exception_TypeID = 0xd625b7063acf691a
 
@@ -2380,6 +3378,16 @@ func (s Exception) String() string {
 	return str
 }
 
+func (s Exception) Builder_() Exception_B_ {
+	return Exception_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Exception_B_) Reader_() (Exception, error) {
+	return Exception{Struct: s.Struct}, *s.Err
+}
 func (s Exception) Reason() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -2399,6 +3407,12 @@ func (s Exception) SetReason(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s Exception_B_) Reason(v string) Exception_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s Exception) Type() Exception_Type {
 	return Exception_Type(s.Struct.Uint16(4))
 }
@@ -2407,6 +3421,12 @@ func (s Exception) SetType(v Exception_Type) {
 	s.Struct.SetUint16(4, uint16(v))
 }
 
+func (s Exception_B_) Type(v Exception_Type) Exception_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(4, uint16(v))
+	}
+	return s
+}
 func (s Exception) ObsoleteIsCallersFault() bool {
 	return s.Struct.Bit(0)
 }
@@ -2415,12 +3435,25 @@ func (s Exception) SetObsoleteIsCallersFault(v bool) {
 	s.Struct.SetBit(0, v)
 }
 
+func (s Exception_B_) ObsoleteIsCallersFault(v bool) Exception_B_ {
+	if *s.Err == nil {
+		s.Struct.SetBit(0, v)
+	}
+	return s
+}
 func (s Exception) ObsoleteDurability() uint16 {
 	return s.Struct.Uint16(2)
 }
 
 func (s Exception) SetObsoleteDurability(v uint16) {
 	s.Struct.SetUint16(2, v)
+}
+
+func (s Exception_B_) ObsoleteDurability(v uint16) Exception_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(2, v)
+	}
+	return s
 }
 
 // Exception_List is a list of Exception.

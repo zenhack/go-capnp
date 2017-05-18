@@ -12,6 +12,11 @@ import (
 
 type Book struct{ capnp.Struct }
 
+type Book_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Book_TypeID is the unique identifier for the type Book.
 const Book_TypeID = 0x8100cc88d7d4d47c
 
@@ -35,6 +40,16 @@ func (s Book) String() string {
 	return str
 }
 
+func (s Book) Builder_() Book_B_ {
+	return Book_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Book_B_) Reader_() (Book, error) {
+	return Book{Struct: s.Struct}, *s.Err
+}
 func (s Book) Title() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -54,12 +69,25 @@ func (s Book) SetTitle(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s Book_B_) Title(v string) Book_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s Book) PageCount() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
 func (s Book) SetPageCount(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s Book_B_) PageCount(v int32) Book_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint32(0, uint32(v))
+	}
+	return s
 }
 
 // Book_List is a list of Book.

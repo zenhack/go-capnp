@@ -13,6 +13,11 @@ import (
 )
 
 type JsonValue struct{ capnp.Struct }
+
+type JsonValue_B_ struct {
+	capnp.Struct
+	Err *error
+}
 type JsonValue_Which uint16
 
 const (
@@ -70,6 +75,17 @@ func (s JsonValue) String() string {
 	return str
 }
 
+func (s JsonValue) Builder_() JsonValue_B_ {
+	return JsonValue_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s JsonValue_B_) Reader_() (JsonValue, error) {
+	return JsonValue{Struct: s.Struct}, *s.Err
+}
+
 func (s JsonValue) Which() JsonValue_Which {
 	return JsonValue_Which(s.Struct.Uint16(0))
 }
@@ -87,6 +103,13 @@ func (s JsonValue) SetBoolean(v bool) {
 	s.Struct.SetBit(16, v)
 }
 
+func (s JsonValue_B_) Boolean(v bool) JsonValue_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 1)
+		s.Struct.SetBit(16, v)
+	}
+	return s
+}
 func (s JsonValue) Number() float64 {
 	return math.Float64frombits(s.Struct.Uint64(8))
 }
@@ -96,6 +119,13 @@ func (s JsonValue) SetNumber(v float64) {
 	s.Struct.SetUint64(8, math.Float64bits(v))
 }
 
+func (s JsonValue_B_) Number(v float64) JsonValue_B_ {
+	if *s.Err != nil {
+		s.Struct.SetUint16(0, 2)
+		s.Struct.SetUint64(8, math.Float64bits(v))
+	}
+	return s
+}
 func (s JsonValue) String_() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -119,6 +149,13 @@ func (s JsonValue) SetString_(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s JsonValue_B_) String_(v string) JsonValue_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 3)
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s JsonValue) Array() (JsonValue_List, error) {
 	p, err := s.Struct.Ptr(0)
 	return JsonValue_List{List: p.List()}, err
@@ -209,6 +246,30 @@ func (s JsonValue) NewCall() (JsonValue_Call, error) {
 	return ss, err
 }
 
+func (s JsonValue_B_) Call(v JsonValue_Call) JsonValue_B_ {
+	if *s.Err == nil {
+		s.Struct.SetUint16(0, 6)
+		*s.Err = s.Struct.SetPtr(0, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s JsonValue_B_) NewCall() JsonValue_Call_B_ {
+	if s.Err != nil {
+		return JsonValue_Call_B_{Err: s.Err}
+	}
+	ss, err := NewJsonValue_Call(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return JsonValue_Call_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return JsonValue_Call_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
+
 // JsonValue_List is a list of JsonValue.
 type JsonValue_List struct{ capnp.List }
 
@@ -236,6 +297,11 @@ func (p JsonValue_Promise) Call() JsonValue_Call_Promise {
 
 type JsonValue_Field struct{ capnp.Struct }
 
+type JsonValue_Field_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // JsonValue_Field_TypeID is the unique identifier for the type JsonValue_Field.
 const JsonValue_Field_TypeID = 0xc27855d853a937cc
 
@@ -259,6 +325,16 @@ func (s JsonValue_Field) String() string {
 	return str
 }
 
+func (s JsonValue_Field) Builder_() JsonValue_Field_B_ {
+	return JsonValue_Field_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s JsonValue_Field_B_) Reader_() (JsonValue_Field, error) {
+	return JsonValue_Field{Struct: s.Struct}, *s.Err
+}
 func (s JsonValue_Field) Name() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -278,6 +354,12 @@ func (s JsonValue_Field) SetName(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s JsonValue_Field_B_) Name(v string) JsonValue_Field_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s JsonValue_Field) Value() (JsonValue, error) {
 	p, err := s.Struct.Ptr(1)
 	return JsonValue{Struct: p.Struct()}, err
@@ -301,6 +383,29 @@ func (s JsonValue_Field) NewValue() (JsonValue, error) {
 	}
 	err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s JsonValue_Field_B_) Value(v JsonValue) JsonValue_Field_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s JsonValue_Field_B_) NewValue() JsonValue_B_ {
+	if s.Err != nil {
+		return JsonValue_B_{Err: s.Err}
+	}
+	ss, err := NewJsonValue(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return JsonValue_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return JsonValue_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // JsonValue_Field_List is a list of JsonValue_Field.
@@ -332,6 +437,11 @@ func (p JsonValue_Field_Promise) Value() JsonValue_Promise {
 
 type JsonValue_Call struct{ capnp.Struct }
 
+type JsonValue_Call_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // JsonValue_Call_TypeID is the unique identifier for the type JsonValue_Call.
 const JsonValue_Call_TypeID = 0x9bbf84153dd4bb60
 
@@ -355,6 +465,16 @@ func (s JsonValue_Call) String() string {
 	return str
 }
 
+func (s JsonValue_Call) Builder_() JsonValue_Call_B_ {
+	return JsonValue_Call_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s JsonValue_Call_B_) Reader_() (JsonValue_Call, error) {
+	return JsonValue_Call{Struct: s.Struct}, *s.Err
+}
 func (s JsonValue_Call) Function() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
@@ -374,6 +494,12 @@ func (s JsonValue_Call) SetFunction(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
+func (s JsonValue_Call_B_) Function(v string) JsonValue_Call_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetText(0, v)
+	}
+	return s
+}
 func (s JsonValue_Call) Params() (JsonValue_List, error) {
 	p, err := s.Struct.Ptr(1)
 	return JsonValue_List{List: p.List()}, err

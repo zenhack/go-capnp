@@ -6,3 +6,12 @@ struct{ {{.G.Capnp}}.Struct }
 {{- else -}}
 {{.BaseNode.Name}}
 {{- end}}
+
+type {{.Node.Name}}_B_ {{ if .IsBase -}}
+struct {
+	{{ .G.Capnp }}.Struct
+	Err *error
+}
+{{- else -}}
+{{.BaseNode.Name}}_B_
+{{- end}}

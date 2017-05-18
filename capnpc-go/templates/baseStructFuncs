@@ -21,3 +21,13 @@ func (s {{.Node.Name}}) String() string {
 }
 {{end}}
 
+func (s {{.Node.Name}}) Builder_() {{.Node.Name}}_B_ {
+	return {{.Node.Name}}_B_{
+		Struct: s.Struct,
+		Err: new(error),
+	}
+}
+
+func (s {{.Node.Name}}_B_) Reader_() ({{.Node.Name}}, error) {
+	return {{.Node.Name}}{Struct: s.Struct}, *s.Err
+}

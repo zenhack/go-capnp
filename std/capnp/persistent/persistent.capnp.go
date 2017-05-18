@@ -82,6 +82,11 @@ type Persistent_save struct {
 
 type Persistent_SaveParams struct{ capnp.Struct }
 
+type Persistent_SaveParams_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Persistent_SaveParams_TypeID is the unique identifier for the type Persistent_SaveParams.
 const Persistent_SaveParams_TypeID = 0xf76fba59183073a5
 
@@ -105,6 +110,16 @@ func (s Persistent_SaveParams) String() string {
 	return str
 }
 
+func (s Persistent_SaveParams) Builder_() Persistent_SaveParams_B_ {
+	return Persistent_SaveParams_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Persistent_SaveParams_B_) Reader_() (Persistent_SaveParams, error) {
+	return Persistent_SaveParams{Struct: s.Struct}, *s.Err
+}
 func (s Persistent_SaveParams) SealFor() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -149,6 +164,11 @@ func (p Persistent_SaveParams_Promise) SealFor() *capnp.Pipeline {
 
 type Persistent_SaveResults struct{ capnp.Struct }
 
+type Persistent_SaveResults_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // Persistent_SaveResults_TypeID is the unique identifier for the type Persistent_SaveResults.
 const Persistent_SaveResults_TypeID = 0xb76848c18c40efbf
 
@@ -172,6 +192,16 @@ func (s Persistent_SaveResults) String() string {
 	return str
 }
 
+func (s Persistent_SaveResults) Builder_() Persistent_SaveResults_B_ {
+	return Persistent_SaveResults_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s Persistent_SaveResults_B_) Reader_() (Persistent_SaveResults, error) {
+	return Persistent_SaveResults{Struct: s.Struct}, *s.Err
+}
 func (s Persistent_SaveResults) SturdyRef() (capnp.Ptr, error) {
 	return s.Struct.Ptr(0)
 }
@@ -327,6 +357,11 @@ type RealmGateway_export struct {
 
 type RealmGateway_import_Params struct{ capnp.Struct }
 
+type RealmGateway_import_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // RealmGateway_import_Params_TypeID is the unique identifier for the type RealmGateway_import_Params.
 const RealmGateway_import_Params_TypeID = 0xf0c2cc1d3909574d
 
@@ -350,6 +385,16 @@ func (s RealmGateway_import_Params) String() string {
 	return str
 }
 
+func (s RealmGateway_import_Params) Builder_() RealmGateway_import_Params_B_ {
+	return RealmGateway_import_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s RealmGateway_import_Params_B_) Reader_() (RealmGateway_import_Params, error) {
+	return RealmGateway_import_Params{Struct: s.Struct}, *s.Err
+}
 func (s RealmGateway_import_Params) Cap() Persistent {
 	p, _ := s.Struct.Ptr(0)
 	return Persistent{Client: p.Interface().Client()}
@@ -394,6 +439,29 @@ func (s RealmGateway_import_Params) NewParams() (Persistent_SaveParams, error) {
 	return ss, err
 }
 
+func (s RealmGateway_import_Params_B_) Params(v Persistent_SaveParams) RealmGateway_import_Params_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s RealmGateway_import_Params_B_) NewParams() Persistent_SaveParams_B_ {
+	if s.Err != nil {
+		return Persistent_SaveParams_B_{Err: s.Err}
+	}
+	ss, err := NewPersistent_SaveParams(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Persistent_SaveParams_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return Persistent_SaveParams_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
+}
+
 // RealmGateway_import_Params_List is a list of RealmGateway_import_Params.
 type RealmGateway_import_Params_List struct{ capnp.List }
 
@@ -429,6 +497,11 @@ func (p RealmGateway_import_Params_Promise) Params() Persistent_SaveParams_Promi
 
 type RealmGateway_export_Params struct{ capnp.Struct }
 
+type RealmGateway_export_Params_B_ struct {
+	capnp.Struct
+	Err *error
+}
+
 // RealmGateway_export_Params_TypeID is the unique identifier for the type RealmGateway_export_Params.
 const RealmGateway_export_Params_TypeID = 0xecafa18b482da3aa
 
@@ -452,6 +525,16 @@ func (s RealmGateway_export_Params) String() string {
 	return str
 }
 
+func (s RealmGateway_export_Params) Builder_() RealmGateway_export_Params_B_ {
+	return RealmGateway_export_Params_B_{
+		Struct: s.Struct,
+		Err:    new(error),
+	}
+}
+
+func (s RealmGateway_export_Params_B_) Reader_() (RealmGateway_export_Params, error) {
+	return RealmGateway_export_Params{Struct: s.Struct}, *s.Err
+}
 func (s RealmGateway_export_Params) Cap() Persistent {
 	p, _ := s.Struct.Ptr(0)
 	return Persistent{Client: p.Interface().Client()}
@@ -494,6 +577,29 @@ func (s RealmGateway_export_Params) NewParams() (Persistent_SaveParams, error) {
 	}
 	err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
 	return ss, err
+}
+
+func (s RealmGateway_export_Params_B_) Params(v Persistent_SaveParams) RealmGateway_export_Params_B_ {
+	if *s.Err == nil {
+		*s.Err = s.Struct.SetPtr(1, v.Struct.ToPtr())
+	}
+	return s
+}
+
+func (s RealmGateway_export_Params_B_) NewParams() Persistent_SaveParams_B_ {
+	if s.Err != nil {
+		return Persistent_SaveParams_B_{Err: s.Err}
+	}
+	ss, err := NewPersistent_SaveParams(s.Struct.Segment())
+	if err != nil {
+		*s.Err = err
+		return Persistent_SaveParams_B_{Err: s.Err}
+	}
+	*s.Err = s.Struct.SetPtr(1, ss.Struct.ToPtr())
+	return Persistent_SaveParams_B_{
+		Struct: ss.Struct,
+		Err:    s.Err,
+	}
 }
 
 // RealmGateway_export_Params_List is a list of RealmGateway_export_Params.

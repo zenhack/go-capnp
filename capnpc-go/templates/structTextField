@@ -27,3 +27,14 @@ func (s {{.Node.Name}}) Set{{.Field.Name|title}}(v string) error {
 	{{- end}}
 }
 
+func (s {{.Node.Name}}_B_) {{.Field.Name|title}}(v {{.FieldType}}) {{.Node.Name}}_B_ {
+	if *s.Err == nil {
+		{{template "_settag" . -}}
+		{{if .Default -}}
+		*s.Err = s.Struct.SetNewText({{.Field.Slot.Offset}}, v)
+		{{- else -}}
+		*s.Err = s.Struct.SetText({{.Field.Slot.Offset}}, v)
+		{{- end}}
+	}
+	return s
+}
