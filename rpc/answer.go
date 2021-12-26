@@ -56,9 +56,8 @@ type answer struct {
 	// results.
 	exportRefs map[exportID]uint32
 
-	// pcall is the PipelineCaller returned by RecvCall.  It will be set
-	// to nil once results are ready.
-	pcall capnp.PipelineCaller
+	// promise is a Promise wrapping the PipelineCaller returned by RecvCAll.
+	promise *capnp.Promise
 
 	// pcalls is added to for every pending RecvCall and subtracted from
 	// for every RecvCall return (delivery acknowledgement).  This is used
@@ -103,17 +102,6 @@ func (c *Conn) newReturn(ctx context.Context) (rpccp.Return, func() error, capnp
 		return rpccp.Return{}, nil, nil, failedf("create return: %w", err)
 	}
 	return ret, send, release, nil
-}
-
-// setPipelineCaller sets ans.pcall to pcall if the answer has not
-// already returned.  The caller MUST NOT be holding onto ans.c.mu
-// or the sender lock.
-func (ans *answer) setPipelineCaller(pcall capnp.PipelineCaller) {
-	ans.c.mu.Lock()
-	if ans.flags&resultsReady == 0 {
-		ans.pcall = pcall
-	}
-	ans.c.mu.Unlock()
 }
 
 // AllocResults allocates the results struct.
@@ -205,13 +193,20 @@ func (ans *answer) Return(e error) {
 // ans.resultsCapTable before calling sendReturn. Only one of
 // sendReturn or sendException should be called.
 func (ans *answer) sendReturn(cstates []capnp.ClientState) (releaseList, error) {
-	ans.pcall = nil
 	ans.flags |= resultsReady
 	var err error
 	ans.exportRefs, err = ans.c.fillPayloadCapTable(ans.results, ans.resultCapTable, cstates)
 	if err != nil {
+		ans.promise.Reject(err)
 		ans.c.report(annotate(err, "send return"))
 		// Continue.  Don't fail to send return if cap table isn't fully filled.
+	} else {
+		content, err := ans.results.Content()
+		if err != nil {
+			ans.promise.Reject(annotate(err, "Read content pointer"))
+		} else {
+			ans.promise.Fulfill(content)
+		}
 	}
 
 	select {
@@ -248,7 +243,7 @@ func (ans *answer) sendReturn(cstates []capnp.ClientState) (releaseList, error) 
 // sendReturn or sendException should be called.
 func (ans *answer) sendException(e error) releaseList {
 	ans.err = e
-	ans.pcall = nil
+	ans.promise.Reject(e)
 	ans.flags |= resultsReady
 
 	select {
