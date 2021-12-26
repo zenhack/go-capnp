@@ -1116,60 +1116,29 @@ func (c *Conn) recvCap(d rpccp.CapDescriptor) (_ *capnp.Client, local bool, _ er
 		if !ok {
 			return nil, false, failedf("receive capability: invalid question id %d", id)
 		}
-		ready := ans.flags&resultsReady != 0
-		fin := ans.flags&finishReceived != 0
-		if fin {
+		if ans.flags&finishReceived != 0 {
 			return nil, false, failedf("receive capability: reused question id before return message was sent: %d", id)
 		}
 
-		if ready {
-			return recvPromisedAnswerCap(ans, promisedAnswer)
+		opList, err := promisedAnswer.Transform()
+		if err != nil {
+			return nil, false, failedf("receive capability: error reading PromisedAnswer.transform: %v", err)
 		}
-		return nil, false, failedf("TODO: recvCap for non-resolved answers")
+		ops, err := parseTransform(opList)
+		if err != nil {
+			return capnp.ErrorClient(err), false, nil
+		}
+
+		future := ans.promise.Answer().Future()
+		for _, op := range ops {
+			future = future.Field(op.Field, op.DefaultValue)
+		}
+
+		// FIXME: figure out what the right value for local is.
+		return future.Client(), false, nil
 	default:
 		return capnp.ErrorClient(failedf("unknown CapDescriptor type %v", w)), false, nil
 	}
-}
-
-func recvPromisedAnswerCap(ans *answer, promisedAnswer rpccp.PromisedAnswer) (_ *capnp.Client, local bool, _ error) {
-	if ans.err != nil {
-		return capnp.ErrorClient(ans.err), false, nil
-	}
-
-	opList, err := promisedAnswer.Transform()
-	if err != nil {
-		return nil, false, failedf("receive capability: error reading PromisedAnswer.transform: %v", err)
-	}
-
-	ops, err := parseTransform(opList)
-	if err != nil {
-		return capnp.ErrorClient(err), false, nil
-	}
-
-	ptr, err := ans.results.Content()
-	if err != nil {
-		return nil, false, failedf("receive capability: error reading return result: %v", err)
-	}
-	ptr, err = capnp.Transform(ptr, ops)
-	if err != nil {
-		return capnp.ErrorClient(err), false, nil
-	}
-	iface := ptr.Interface()
-	if !iface.IsValid() {
-		// null client.
-		return nil, false, nil
-	}
-
-	// Avoid just calling iface.Client(), since the cap table is no longer
-	// attached to the message.
-	capId := int(iface.Capability())
-	if capId >= len(ans.resultCapTable) || capId < 0 {
-		return capnp.ErrorClient(failedf("receive capability: capbality id out of range: %d", capId)), false, nil
-	}
-	client := ans.resultCapTable[capId].AddRef()
-	// FIXME: somehow check if this is a local client, rather than always returning false;
-	// otherwise, we could fail to send a necessary disembargo.
-	return ans.resultCapTable[capId].AddRef(), false, nil
 }
 
 // recvPayload extracts the content pointer after populating the
