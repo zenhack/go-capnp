@@ -990,3 +990,8 @@ const (
 	isCompositeList listFlags = 1 << iota
 	isBitList
 )
+
+func (l List) EncodeAsPtr(*Segment) Ptr { return l.ToPtr() }
+func (l *List) DecodeFromPtr(p Ptr)     { *l = p.List() }
+
+var _ TypeParam = &List{}

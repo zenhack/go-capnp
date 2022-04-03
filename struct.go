@@ -345,3 +345,8 @@ func copyStruct(dst, src Struct) error {
 
 	return nil
 }
+
+func (s Struct) EncodeAsPtr(*Segment) Ptr { return s.ToPtr() }
+func (s *Struct) DecodeFromPtr(p Ptr)     { *s = p.Struct() }
+
+var _ TypeParam = &Struct{}

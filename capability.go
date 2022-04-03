@@ -884,3 +884,19 @@ func (ec errorClient) Shutdown() {
 }
 
 var closedSignal = make(chan struct{})
+
+func (i Interface) EncodeAsPtr(*Segment) Ptr { return i.ToPtr() }
+func (i *Interface) DecodeFromPtr(p Ptr)     { *i = p.Interface() }
+
+var _ TypeParam = &Interface{}
+
+func (c *Client) EncodeAsPtr(seg *Segment) Ptr {
+	msg := seg.Message()
+	capId := msg.AddCap(c)
+	iface := NewInterface(seg, capId)
+	return iface.ToPtr()
+}
+
+func DecodeClientFromPtr(c **Client, p Ptr) {
+	*c = p.Interface().Client()
+}

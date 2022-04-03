@@ -20,4 +20,3 @@ func (s {{.Node.Name}}) String() string {
 	return str
 }
 {{end}}
-

@@ -44,6 +44,16 @@ func (c Persistent) Release() {
 	c.Client.Release()
 }
 
+func (c Persistent) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
+	return c.Client.EncodeAsPtr(s)
+}
+
+func (c *Persistent) DecodeFromPtr(p capnp.Ptr) {
+	capnp.DecodeClientFromPtr(&c.Client, p)
+}
+
+var _ capnp.TypeParam = &Persistent{}
+
 // A Persistent_Server is a Persistent with a local implementation.
 type Persistent_Server interface {
 	Save(context.Context, Persistent_save) error
