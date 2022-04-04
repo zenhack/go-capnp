@@ -35,6 +35,6 @@ func (c {{ template "_nodeReceiver" $.Node }}) EncodeAsPtr(s *{{.G.Capnp}}.Segme
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *{{ template "_nodeReceiver" $.Node }}) DecodeFromPtr(p {{.G.Capnp}}.Ptr) {
-	{{.G.Capnp}}.DecodeClientFromPtr(&c.Client, p)
+func (c {{ template "_nodeReceiver" $.Node }}) DecodeFromPtr(p {{.G.Capnp}}.Ptr) {{ template "_nodeReceiver" $.Node }} {
+	return {{ template "_nodeReceiver" $.Node }}{Client: c.Client.DecodeFromPtr(p)}
 }

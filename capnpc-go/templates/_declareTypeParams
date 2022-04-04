@@ -2,7 +2,7 @@
 [
 {{- range $index, $param = $.Node.AllTypeParams -}}
 {{- if $index -}}, {{- end -}}
-{{$param}} {{$.G.Capnp}}.TypeParam
+{{$param}} {{$.G.Capnp}}.TypeParam[{{$param}}]
 {{- end -}}
 ]
 {{- end -}}

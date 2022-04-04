@@ -992,6 +992,6 @@ const (
 )
 
 func (l List) EncodeAsPtr(*Segment) Ptr { return l.ToPtr() }
-func (l *List) DecodeFromPtr(p Ptr)     { *l = p.List() }
+func (l List) DecodeFromPtr(p Ptr) List { return p.List() }
 
-var _ TypeParam = &List{}
+var _ TypeParam[List] = List{}

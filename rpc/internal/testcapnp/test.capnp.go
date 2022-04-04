@@ -47,8 +47,8 @@ func (c PingPong) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *PingPong) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c PingPong) DecodeFromPtr(p capnp.Ptr) PingPong {
+	return PingPong{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A PingPong_Server is a PingPong with a local implementation.
@@ -269,8 +269,8 @@ func (c StreamTest) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *StreamTest) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c StreamTest) DecodeFromPtr(p capnp.Ptr) StreamTest {
+	return StreamTest{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A StreamTest_Server is a StreamTest with a local implementation.
@@ -449,8 +449,8 @@ func (c CapArgsTest) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *CapArgsTest) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c CapArgsTest) DecodeFromPtr(p capnp.Ptr) CapArgsTest {
+	return CapArgsTest{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A CapArgsTest_Server is a CapArgsTest with a local implementation.

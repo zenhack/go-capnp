@@ -4704,8 +4704,8 @@ func (c Echo) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *Echo) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c Echo) DecodeFromPtr(p capnp.Ptr) Echo {
+	return Echo{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A Echo_Server is a Echo with a local implementation.
@@ -5353,8 +5353,8 @@ func (c CallSequence) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *CallSequence) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c CallSequence) DecodeFromPtr(p capnp.Ptr) CallSequence {
+	return CallSequence{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A CallSequence_Server is a CallSequence with a local implementation.
@@ -5583,8 +5583,8 @@ func (c Pipeliner) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *Pipeliner) DecodeFromPtr(p capnp.Ptr) {
-	capnp.DecodeClientFromPtr(&c.Client, p)
+func (c Pipeliner) DecodeFromPtr(p capnp.Ptr) Pipeliner {
+	return Pipeliner{Client: c.Client.DecodeFromPtr(p)}
 }
 
 // A Pipeliner_Server is a Pipeliner with a local implementation.
