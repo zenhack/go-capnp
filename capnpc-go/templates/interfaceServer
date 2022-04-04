@@ -13,7 +13,7 @@ func {{.Node.Name}}_NewServer{{ template "_declareTypeParams" . }}(s {{.Node.Nam
 
 // {{.Node.Name}}_ServerToClient creates a new Client from an implementation of {{.Node.Name}}_Server.
 // The caller is responsible for calling Release on the returned Client.
-func {{.Node.Name}}_ServerToClient{{ template "_declareTypeParams" . }}(s {{.Node.Name}}_Server{{ template "_passTypeParams" .Node.AllTypeParams}}, policy *{{.G.Imports.Server}}.Policy) {{.Node.Name}}{{ template "_passTypeParams" .Node.AllTypeParams }} {
+func {{.Node.Name}}_ServerToClient{{ template "_declareTypeParams" . }}(s {{.Node.Name}}_Server{{ template "_passTypeParams" .Node.AllTypeParams}}, policy *{{.G.Imports.Server}}.Policy) {{ template "_nodeReceiver" .Node }} {
 	return {{.Node.Name}}{{ template "_passTypeParams" .Node.AllTypeParams }}{Client: {{.G.Capnp}}.NewClient({{.Node.Name}}_NewServer{{ template "_passTypeParams" .Node.AllTypeParams }}(s, policy))}
 }
 
