@@ -12,12 +12,12 @@ import (
 
 const PersistentAnnotation = uint64(0xf622595091cafb67)
 
-type Persistent struct{ Client *capnp.Client }
+type Persistent[SturdyRef capnp.TypeParam, Owner capnp.TypeParam] struct{ Client *capnp.Client }
 
 // Persistent_TypeID is the unique identifier for the type Persistent.
 const Persistent_TypeID = 0xc8cb212fcd9f5691
 
-func (c Persistent) Save(ctx context.Context, params func(Persistent_SaveParams) error) (Persistent_SaveResults_Future, capnp.ReleaseFunc) {
+func (c Persistent[SturdyRef, Owner]) Save(ctx context.Context, params func(Persistent_SaveParams) error) (Persistent_SaveResults_Future, capnp.ReleaseFunc) {
 	s := capnp.Send{
 		Method: capnp.Method{
 			InterfaceID:   0xc8cb212fcd9f5691,
@@ -34,46 +34,44 @@ func (c Persistent) Save(ctx context.Context, params func(Persistent_SaveParams)
 	return Persistent_SaveResults_Future{Future: ans.Future()}, release
 }
 
-func (c Persistent) AddRef() Persistent {
-	return Persistent{
+func (c Persistent[SturdyRef, Owner]) AddRef() Persistent[SturdyRef, Owner] {
+	return Persistent[SturdyRef, Owner]{
 		Client: c.Client.AddRef(),
 	}
 }
 
-func (c Persistent) Release() {
+func (c Persistent[SturdyRef, Owner]) Release() {
 	c.Client.Release()
 }
 
-func (c Persistent) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
+func (c Persistent[SturdyRef, Owner]) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *Persistent) DecodeFromPtr(p capnp.Ptr) {
+func (c *Persistent[SturdyRef, Owner]) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
 
-var _ capnp.TypeParam = &Persistent{}
-
 // A Persistent_Server is a Persistent with a local implementation.
-type Persistent_Server interface {
+type Persistent_Server[SturdyRef capnp.TypeParam, Owner capnp.TypeParam] interface {
 	Save(context.Context, Persistent_save) error
 }
 
 // Persistent_NewServer creates a new Server from an implementation of Persistent_Server.
-func Persistent_NewServer(s Persistent_Server, policy *server.Policy) *server.Server {
+func Persistent_NewServer[SturdyRef capnp.TypeParam, Owner capnp.TypeParam](s Persistent_Server[SturdyRef, Owner], policy *server.Policy) *server.Server {
 	c, _ := s.(server.Shutdowner)
-	return server.New(Persistent_Methods(nil, s), s, c, policy)
+	return server.New(Persistent_Methods[SturdyRef, Owner](nil, s), s, c, policy)
 }
 
 // Persistent_ServerToClient creates a new Client from an implementation of Persistent_Server.
 // The caller is responsible for calling Release on the returned Client.
-func Persistent_ServerToClient(s Persistent_Server, policy *server.Policy) Persistent {
-	return Persistent{Client: capnp.NewClient(Persistent_NewServer(s, policy))}
+func Persistent_ServerToClient[SturdyRef capnp.TypeParam, Owner capnp.TypeParam](s Persistent_Server[SturdyRef, Owner], policy *server.Policy) Persistent[SturdyRef, Owner] {
+	return Persistent[SturdyRef, Owner]{Client: capnp.NewClient(Persistent_NewServer[SturdyRef, Owner](s, policy))}
 }
 
 // Persistent_Methods appends Methods to a slice that invoke the methods on s.
 // This can be used to create a more complicated Server.
-func Persistent_Methods(methods []server.Method, s Persistent_Server) []server.Method {
+func Persistent_Methods[SturdyRef capnp.TypeParam, Owner capnp.TypeParam](methods []server.Method, s Persistent_Server[SturdyRef, Owner]) []server.Method {
 	if cap(methods) == 0 {
 		methods = make([]server.Method, 0, 1)
 	}

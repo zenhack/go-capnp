@@ -1,12 +1,12 @@
 {{with .Annotations.Doc -}}
 // {{.}}
 {{end -}}
-type {{.Node.Name}} struct { Client *{{.G.Capnp}}.Client }
+type {{.Node.Name}}{{ template "_declareTypeParams" . }} struct { Client *{{.G.Capnp}}.Client }
 
 {{ template "_typeid" .Node }}
 
 {{range .Methods -}}
-func (c {{$.Node.Name}}) {{.Name|title}}(ctx {{$.G.Imports.Context}}.Context, params func({{$.G.RemoteNodeName .Params $.Node}}) error) ({{$.G.RemoteNodeName .Results $.Node}}_Future, {{$.G.Capnp}}.ReleaseFunc) {
+func (c {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}) {{.Name|title}}(ctx {{$.G.Imports.Context}}.Context, params func({{$.G.RemoteNodeName .Params $.Node}}) error) ({{$.G.RemoteNodeName .Results $.Node}}_Future, {{$.G.Capnp}}.ReleaseFunc) {
 	s := {{$.G.Capnp}}.Send{
 		Method: {{$.G.Capnp}}.Method{
 			{{template "_interfaceMethod" .}}
@@ -21,22 +21,20 @@ func (c {{$.Node.Name}}) {{.Name|title}}(ctx {{$.G.Imports.Context}}.Context, pa
 }
 {{end}}
 
-func (c {{$.Node.Name}}) AddRef() {{$.Node.Name}} {
-	return {{$.Node.Name}} {
+func (c {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}) AddRef() {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }} {
+	return {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}{
 		Client: c.Client.AddRef(),
 	}
 }
 
-func (c {{$.Node.Name}}) Release() {
+func (c {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}) Release() {
 	c.Client.Release()
 }
 
-func (c {{$.Node.Name}}) EncodeAsPtr(s *{{.G.Capnp}}.Segment) {{.G.Capnp}}.Ptr {
+func (c {{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}) EncodeAsPtr(s *{{.G.Capnp}}.Segment) {{.G.Capnp}}.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c *{{$.Node.Name}}) DecodeFromPtr(p {{.G.Capnp}}.Ptr) {
+func (c *{{$.Node.Name}}{{ template "_passTypeParams" $.Node.AllTypeParams }}) DecodeFromPtr(p {{.G.Capnp}}.Ptr) {
 	{{.G.Capnp}}.DecodeClientFromPtr(&c.Client, p)
 }
-
-var _ {{.G.Capnp}}.TypeParam = &{{$.Node.Name}}{}

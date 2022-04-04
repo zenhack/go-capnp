@@ -1,0 +1,8 @@
+{{- if . -}}
+[
+{{- range $index, $param = . -}}
+	{{- if $index -}}, {{- end -}}
+	{{- $param -}}
+{{- end -}}
+]
+{{- end -}}

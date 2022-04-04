@@ -14,6 +14,17 @@ type node struct {
 	imp   string
 	nodes []*node // only for file nodes
 	Name  string
+
+	// names of type parameters, for this node only.
+	TypeParams []string
+
+	// names of type parameters, for all parent nodes and for this node.
+	// parameters from further up in the hierarchy appear first.
+	AllTypeParams []string
+}
+
+func (n *node) IsGeneric() bool {
+	return n.Node.IsGeneric()
 }
 
 func (n *node) codeOrderFields() []field {
@@ -220,6 +231,23 @@ func buildNodeMap(req schema.CodeGeneratorRequest) (nodeMap, error) {
 		if n.Which() == schema.Node_Which_file {
 			allfiles = append(allfiles, n)
 		}
+		if ni.IsGeneric() {
+			params, err := ni.Parameters()
+			if err != nil {
+				return nil, fmt.Errorf("getting type parameters for 0x%0x: %v",
+					n.Id(), err)
+			}
+			n.TypeParams = make([]string, params.Len())
+			for i := 0; i < params.Len(); i++ {
+				name, err := params.At(i).Name()
+				if err != nil {
+					return nil, fmt.Errorf(
+						"getting name for type parameter %v of node 0x%0x: %v",
+						i, n.Id(), err)
+				}
+				n.TypeParams[i] = name
+			}
+		}
 	}
 	for _, f := range allfiles {
 		fann, err := f.Annotations()
@@ -239,8 +267,23 @@ func buildNodeMap(req schema.CodeGeneratorRequest) (nodeMap, error) {
 				}
 			}
 		}
+		populateAllTypeParams(nodes, f)
 	}
 	return nodes, nil
+}
+
+// populate the AllTypeParams field of all the nodes underneath `node`. The TypeParams field
+// of all nodes must already be filled in.
+func populateAllTypeParams(nodes nodeMap, parent *node) {
+	nnodes, _ := parent.Node.NestedNodes()
+	for i := 0; i < nnodes.Len(); i++ {
+		nn := nnodes.At(i)
+		if child := nodes[nn.Id()]; child != nil {
+			child.AllTypeParams = append(child.AllTypeParams, parent.AllTypeParams...)
+			child.AllTypeParams = append(child.AllTypeParams, child.TypeParams...)
+			populateAllTypeParams(nodes, child)
+		}
+	}
 }
 
 // resolveName is called as part of building up a node map to populate the name field of n.

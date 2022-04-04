@@ -51,8 +51,6 @@ func (c *PingPong) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
 
-var _ capnp.TypeParam = &PingPong{}
-
 // A PingPong_Server is a PingPong with a local implementation.
 type PingPong_Server interface {
 	EchoNum(context.Context, PingPong_echoNum) error
@@ -275,8 +273,6 @@ func (c *StreamTest) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
 
-var _ capnp.TypeParam = &StreamTest{}
-
 // A StreamTest_Server is a StreamTest with a local implementation.
 type StreamTest_Server interface {
 	Push(context.Context, StreamTest_push) error
@@ -456,8 +452,6 @@ func (c CapArgsTest) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 func (c *CapArgsTest) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
-
-var _ capnp.TypeParam = &CapArgsTest{}
 
 // A CapArgsTest_Server is a CapArgsTest with a local implementation.
 type CapArgsTest_Server interface {

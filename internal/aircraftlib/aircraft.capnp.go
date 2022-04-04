@@ -4708,8 +4708,6 @@ func (c *Echo) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
 
-var _ capnp.TypeParam = &Echo{}
-
 // A Echo_Server is a Echo with a local implementation.
 type Echo_Server interface {
 	Echo(context.Context, Echo_echo) error
@@ -5359,8 +5357,6 @@ func (c *CallSequence) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
 
-var _ capnp.TypeParam = &CallSequence{}
-
 // A CallSequence_Server is a CallSequence with a local implementation.
 type CallSequence_Server interface {
 	GetNumber(context.Context, CallSequence_getNumber) error
@@ -5590,8 +5586,6 @@ func (c Pipeliner) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 func (c *Pipeliner) DecodeFromPtr(p capnp.Ptr) {
 	capnp.DecodeClientFromPtr(&c.Client, p)
 }
-
-var _ capnp.TypeParam = &Pipeliner{}
 
 // A Pipeliner_Server is a Pipeliner with a local implementation.
 type Pipeliner_Server interface {
