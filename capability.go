@@ -285,19 +285,19 @@ func (c *Client) SendCall(ctx context.Context, s Send) (*Answer, ReleaseFunc) {
 	h, _, released, finish := c.startCall()
 	defer finish()
 	if released {
-		return ErrorAnswer(s.Method, newError("call on released client")), func() {}
+		return ErrorAnswer(s.Method, errorf("call on released client")), func() {}
 	}
 	if h == nil {
-		return ErrorAnswer(s.Method, newError("call on null client")), func() {}
+		return ErrorAnswer(s.Method, errorf("call on null client")), func() {}
 	}
 
 	limiter := c.GetFlowLimiter()
-	var gotResponse func()
 
 	// We need to call PlaceArgs before we will know the size of message for
 	// flow control purposes, so wrap it in a function that measures after the
 	// arguments have been placed:
 	placeArgs := s.PlaceArgs
+	var size uint64
 	s.PlaceArgs = func(args Struct) error {
 		var err error
 		if placeArgs != nil {
@@ -307,30 +307,48 @@ func (c *Client) SendCall(ctx context.Context, s Send) (*Answer, ReleaseFunc) {
 			}
 		}
 
-		var size uint64
 		size, err = args.Segment().Message().TotalSize()
-		if err != nil {
-			return err
-		}
-
-		gotResponse, err = limiter.StartMessage(ctx, size)
 		return err
 	}
 
-	ans, err := h.Send(ctx, s)
-	if err == nil {
-		p := ans.f.promise
-		p.mu.Lock()
-		if p.isResolved() {
-			// Wow, that was fast.
-			p.mu.Unlock()
-			gotResponse()
-		} else {
-			p.signals = append(p.signals, gotResponse)
-			p.mu.Unlock()
-		}
+	ans, rel := h.Send(ctx, s)
+	// FIXME: an earlier version of this code called StartMessage() from
+	// within PlaceArgs -- but that can result in a deadlock, since it means
+	// the client hook is holding a lock while we're waiting on the limiter.
+	//
+	// As a temporary workaround, we instead do StartMessage *after* the send.
+	// This still has a bug, but a much less serious one: we may slightly
+	// over-use our limit, but only by the size of a single message. This is
+	// mostly a problem in that it contradicts the documentation and is
+	// conceptually odd.
+	//
+	// Longer term, we should fix a more serious design problem: Send() is
+	// holding a lock while calling into user code (PlaceArgs), so this
+	// deadlock could also arise if the user code blocks. Once that is solved,
+	// we can back out this hack.
+	gotResponse, err := limiter.StartMessage(ctx, size)
+	if err != nil {
+		// HACK: An error should only happen if the context was cancelled,
+		// in which case the caller will notice it soon probably. The call
+		// still went off ok, so we can just return the result we already
+		// got, and trying to report the error is awkward because we can't
+		// return one... so we don't. Set gotResponse to something that won't
+		// break things, and call it a day. See comments above about a
+		// longer term solution to this mess.
+		gotResponse = func() {}
 	}
-	return ans, err
+	p := ans.f.promise
+	p.mu.Lock()
+	if p.isResolved() {
+		// Wow, that was fast.
+		p.mu.Unlock()
+		gotResponse()
+	} else {
+		p.signals = append(p.signals, gotResponse)
+		p.mu.Unlock()
+	}
+
+	return ans, rel
 }
 
 // RecvCall starts executing a method with the referenced arguments
@@ -345,11 +363,11 @@ func (c *Client) RecvCall(ctx context.Context, r Recv) PipelineCaller {
 	h, _, released, finish := c.startCall()
 	defer finish()
 	if released {
-		r.Reject(newError("call on released client"))
+		r.Reject(errorf("call on released client"))
 		return nil
 	}
 	if h == nil {
-		r.Reject(newError("call on null client"))
+		r.Reject(errorf("call on null client"))
 		return nil
 	}
 	return h.Recv(ctx, r)
@@ -384,11 +402,13 @@ func (c *Client) Resolve(ctx context.Context) error {
 	for {
 		h, released, resolved := c.peek()
 		if released {
-			return newError("cannot resolve released client")
+			return errorf("cannot resolve released client")
 		}
+
 		if resolved {
 			return nil
 		}
+
 		select {
 		case <-h.resolved:
 		case <-ctx.Done():
@@ -604,6 +624,10 @@ func finalizeClient(c *Client) {
 // A ClientPromise resolves the identity of a client created by NewPromisedClient.
 type ClientPromise struct {
 	h *clientHook
+}
+
+func (cp *ClientPromise) Reject(err error) {
+	cp.Fulfill(ErrorClient(err))
 }
 
 // Fulfill resolves the client promise to c.  After Fulfill returns,

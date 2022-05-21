@@ -18,6 +18,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -33,7 +34,6 @@ const (
 	textImport    = capnpImport + "/encoding/text"
 	schemasImport = capnpImport + "/schemas"
 	serverImport  = capnpImport + "/server"
-	contextImport = "golang.org/x/net/context"
 )
 
 // genoptions are parameters that control code generation.
@@ -45,7 +45,7 @@ type genoptions struct {
 }
 
 type renderer interface {
-	Render(name string, params interface{}) error
+	Render(params any) error
 	Bytes() []byte
 }
 
@@ -55,7 +55,12 @@ type templateRenderer struct {
 }
 
 // Render calls ExecuteTemplate to render to its buffer.
-func (tr *templateRenderer) Render(name string, params interface{}) error {
+func (tr *templateRenderer) Render(params any) error {
+	// Derive the template name from the name of the underlying type of
+	// params:
+	typeName := reflect.TypeOf(params).Name()
+	name := typeName[:len(typeName)-len("Params")]
+
 	return tr.t.ExecuteTemplate(&tr.buf, name, params)
 }
 
@@ -162,7 +167,7 @@ func (g *generator) defineSchemaVar() error {
 	if err := z.Close(); err != nil {
 		return err
 	}
-	return renderSchemaVar(g.r, schemaVarParams{
+	return g.r.Render(schemaVarParams{
 		G:       g,
 		FileID:  g.fileID,
 		NodeIDs: ids,
@@ -251,7 +256,7 @@ func (g *generator) defineEnum(n *node) error {
 		ev[e.CodeOrder()] = makeEnumval(n, i, e)
 	}
 	nann, _ := n.Annotations()
-	err := renderEnum(g.r, enumParams{
+	err := g.r.Render(enumParams{
 		G:           g,
 		Node:        n,
 		Annotations: parseAnnotations(nann),
@@ -364,14 +369,26 @@ func (g *generator) Value(rel *node, t schema.Type, v schema.Value) (string, err
 	case schema.Type_Which_anyPointer:
 		data, _ := v.AnyPointer()
 		var buf bytes.Buffer
+
 		sd, err := g.data.copyData(data)
 		if err != nil {
 			return "", err
 		}
+
+		// capability pointer?
+		if t.AnyPointer().Which() == schema.Type_anyPointer_Which_unconstrained &&
+			t.AnyPointer().Unconstrained().Which() == schema.Type_anyPointer_unconstrained_Which_capability {
+			return "nil", nil // static values of *Client are always nil.
+		}
+
+		// TODO:  handle other pointer types
+
+		// Fall back to default case => generic pointer value
 		err = templates.ExecuteTemplate(&buf, "pointerValue", pointerValueParams{
 			G:     g,
 			Value: sd,
 		})
+
 		return buf.String(), err
 
 	case schema.Type_Which_list:
@@ -397,7 +414,7 @@ func (g *generator) Value(rel *node, t schema.Type, v schema.Value) (string, err
 }
 
 func (g *generator) defineAnnotation(n *node) error {
-	err := renderAnnotation(g.r, annotationParams{
+	err := g.r.Render(annotationParams{
 		G:    g,
 		Node: n,
 	})
@@ -447,7 +464,7 @@ func (g *generator) defineConstNodes(nodes []*node) error {
 		// short path
 		return nil
 	}
-	err := renderConstants(g.r, constantsParams{
+	err := g.r.Render(constantsParams{
 		G:      g,
 		Consts: constNodes[:nc],
 		Vars:   constNodes[nc:],
@@ -485,22 +502,22 @@ func (g *generator) defineField(n *node, f field) (err error) {
 	}
 	switch t.Which() {
 	case schema.Type_Which_void:
-		return renderStructVoidField(g.r, structVoidFieldParams(params))
+		return g.r.Render(structVoidFieldParams(params))
 	case schema.Type_Which_bool:
-		return renderStructBoolField(g.r, structBoolFieldParams{
+		return g.r.Render(structBoolFieldParams{
 			structFieldParams: params,
 			Default:           def.Bool(),
 		})
 
 	case schema.Type_Which_uint8, schema.Type_Which_uint16, schema.Type_Which_uint32, schema.Type_Which_uint64:
-		return renderStructUintField(g.r, structUintFieldParams{
+		return g.r.Render(structUintFieldParams{
 			structFieldParams: params,
 			Bits:              intbits(t.Which()),
 			Default:           uintValue(def),
 		})
 
 	case schema.Type_Which_int8, schema.Type_Which_int16, schema.Type_Which_int32, schema.Type_Which_int64:
-		return renderStructIntField(g.r, structIntFieldParams{
+		return g.r.Render(structIntFieldParams{
 			structUintFieldParams: structUintFieldParams{
 				structFieldParams: params,
 				Bits:              intbits(t.Which()),
@@ -513,7 +530,7 @@ func (g *generator) defineField(n *node, f field) (err error) {
 		if err != nil {
 			return err
 		}
-		return renderStructIntField(g.r, structIntFieldParams{
+		return g.r.Render(structIntFieldParams{
 			structUintFieldParams: structUintFieldParams{
 				structFieldParams: params,
 				Bits:              16,
@@ -522,14 +539,14 @@ func (g *generator) defineField(n *node, f field) (err error) {
 			EnumName: rn,
 		})
 	case schema.Type_Which_float32:
-		return renderStructFloatField(g.r, structFloatFieldParams{
+		return g.r.Render(structFloatFieldParams{
 			structFieldParams: params,
 			Bits:              32,
 			Default:           uint64(math.Float32bits(def.Float32())),
 		})
 
 	case schema.Type_Which_float64:
-		return renderStructFloatField(g.r, structFloatFieldParams{
+		return g.r.Render(structFloatFieldParams{
 			structFieldParams: params,
 			Bits:              64,
 			Default:           math.Float64bits(def.Float64()),
@@ -540,7 +557,7 @@ func (g *generator) defineField(n *node, f field) (err error) {
 		if err != nil {
 			return err
 		}
-		return renderStructTextField(g.r, structTextFieldParams{
+		return g.r.Render(structTextFieldParams{
 			structFieldParams: params,
 			Default:           d,
 		})
@@ -550,7 +567,7 @@ func (g *generator) defineField(n *node, f field) (err error) {
 		if err != nil {
 			return err
 		}
-		return renderStructDataField(g.r, structDataFieldParams{
+		return g.r.Render(structDataFieldParams{
 			structFieldParams: params,
 			Default:           d,
 		})
@@ -569,7 +586,7 @@ func (g *generator) defineField(n *node, f field) (err error) {
 		if err != nil {
 			return err
 		}
-		return renderStructStructField(g.r, structStructFieldParams{
+		return g.r.Render(structStructFieldParams{
 			structFieldParams: params,
 			TypeNode:          tn,
 			Default:           defref,
@@ -585,7 +602,17 @@ func (g *generator) defineField(n *node, f field) (err error) {
 				return err
 			}
 		}
-		return renderStructPointerField(g.r, structPointerFieldParams{
+
+		// capability pointer?
+		if t.AnyPointer().Which() == schema.Type_anyPointer_Which_unconstrained &&
+			t.AnyPointer().Unconstrained().Which() == schema.Type_anyPointer_unconstrained_Which_capability {
+			return g.r.Render(structCapabilityFieldParams(params))
+		}
+
+		// TODO: handle other pointer types
+
+		// Fall back to default case => generic pointer value
+		return g.r.Render(structPointerFieldParams{
 			structFieldParams: params,
 			Default:           defref,
 		})
@@ -600,13 +627,13 @@ func (g *generator) defineField(n *node, f field) (err error) {
 				return err
 			}
 		}
-		return renderStructListField(g.r, structListFieldParams{
+		return g.r.Render(structListFieldParams{
 			structFieldParams: params,
 			Default:           defref,
 		})
 
 	case schema.Type_Which_interface:
-		return renderStructInterfaceField(g.r, structInterfaceFieldParams(params))
+		return g.r.Render(structInterfaceFieldParams(params))
 	default:
 		return fmt.Errorf("defining unhandled field type %v", t.Which())
 	}
@@ -642,21 +669,20 @@ func makeNodeTypeRef(n, rel *node) (typeRef, error) {
 
 var (
 	staticTypeRefs = map[schema.Type_Which]typeRef{
-		schema.Type_Which_void:       {},
-		schema.Type_Which_bool:       {name: "bool"},
-		schema.Type_Which_int8:       {name: "int8"},
-		schema.Type_Which_int16:      {name: "int16"},
-		schema.Type_Which_int32:      {name: "int32"},
-		schema.Type_Which_int64:      {name: "int64"},
-		schema.Type_Which_uint8:      {name: "uint8"},
-		schema.Type_Which_uint16:     {name: "uint16"},
-		schema.Type_Which_uint32:     {name: "uint32"},
-		schema.Type_Which_uint64:     {name: "uint64"},
-		schema.Type_Which_float32:    {name: "float32"},
-		schema.Type_Which_float64:    {name: "float64"},
-		schema.Type_Which_text:       {name: "string"},
-		schema.Type_Which_data:       {name: "[]byte"},
-		schema.Type_Which_anyPointer: {name: "Pointer", imp: capnpImportSpec},
+		schema.Type_Which_void:    {},
+		schema.Type_Which_bool:    {name: "bool"},
+		schema.Type_Which_int8:    {name: "int8"},
+		schema.Type_Which_int16:   {name: "int16"},
+		schema.Type_Which_int32:   {name: "int32"},
+		schema.Type_Which_int64:   {name: "int64"},
+		schema.Type_Which_uint8:   {name: "uint8"},
+		schema.Type_Which_uint16:  {name: "uint16"},
+		schema.Type_Which_uint32:  {name: "uint32"},
+		schema.Type_Which_uint64:  {name: "uint64"},
+		schema.Type_Which_float32: {name: "float32"},
+		schema.Type_Which_float64: {name: "float64"},
+		schema.Type_Which_text:    {name: "string"},
+		schema.Type_Which_data:    {name: "[]byte"},
 	}
 	staticListTypeRefs = map[schema.Type_Which]typeRef{
 		// TODO(light): omitting newfunc since it doesn't have a similar type signature (no errors).
@@ -721,6 +747,18 @@ func makeTypeRef(t schema.Type, rel *node, nodes nodeMap) (typeRef, error) {
 		case schema.Type_Which_anyPointer, schema.Type_Which_list, schema.Type_Which_interface:
 			return typeRef{name: "PointerList", newfunc: "NewPointerList", imp: capnpImportSpec}, nil
 		}
+	case schema.Type_Which_anyPointer:
+		// capability pointer?
+		if t.AnyPointer().Which() == schema.Type_anyPointer_Which_unconstrained &&
+			t.AnyPointer().Unconstrained().Which() == schema.Type_anyPointer_unconstrained_Which_capability {
+			return typeRef{name: "Client", imp: capnpImportSpec}, nil
+		}
+
+		// TODO:  handle other pointer types
+
+		// Fall back to default => generic pointer type
+		return typeRef{name: "Ptr", imp: capnpImportSpec}, nil
+
 	}
 	return typeRef{}, fmt.Errorf("unable to reference type %v", t.Which())
 }
@@ -815,7 +853,7 @@ func (g *generator) defineStruct(n *node) error {
 func (g *generator) defineStructTypes(n, baseNode *node) error {
 	nann, _ := n.Annotations()
 	ann := parseAnnotations(nann)
-	err := renderStructTypes(g.r, structTypesParams{
+	err := g.r.Render(structTypesParams{
 		G:           g,
 		Node:        n,
 		Annotations: ann,
@@ -851,7 +889,7 @@ func (g *generator) defineStructEnums(n *node) error {
 		}
 	}
 	if n.StructNode().DiscriminantCount() > 0 {
-		err := renderStructEnums(g.r, structEnumsParams{
+		err := g.r.Render(structEnumsParams{
 			G:          g,
 			Node:       n,
 			Fields:     members,
@@ -876,7 +914,7 @@ func (g *generator) defineStructEnums(n *node) error {
 }
 
 func (g *generator) defineStructFuncs(n *node) error {
-	err := renderStructFuncs(g.r, structFuncsParams{
+	err := g.r.Render(structFuncsParams{
 		G:    g,
 		Node: n,
 	})
@@ -895,7 +933,7 @@ func (g *generator) defineStructFuncs(n *node) error {
 			if err != nil {
 				return err
 			}
-			err = renderStructGroup(g.r, structGroupParams{
+			err = g.r.Render(structGroupParams{
 				G:     g,
 				Node:  n,
 				Group: grp,
@@ -923,7 +961,7 @@ func (g *generator) ObjectSize(n *node) (string, error) {
 }
 
 func (g *generator) defineBaseStructFuncs(n *node) error {
-	err := renderBaseStructFuncs(g.r, baseStructFuncsParams{
+	err := g.r.Render(baseStructFuncsParams{
 		G:            g,
 		Node:         n,
 		StringMethod: g.opts.structStrings,
@@ -935,7 +973,7 @@ func (g *generator) defineBaseStructFuncs(n *node) error {
 }
 
 func (g *generator) defineStructList(n *node) error {
-	err := renderStructList(g.r, structListParams{
+	err := g.r.Render(structListParams{
 		G:            g,
 		Node:         n,
 		StringMethod: g.opts.structStrings,
@@ -947,7 +985,7 @@ func (g *generator) defineStructList(n *node) error {
 }
 
 func (g *generator) defineStructPromise(n *node) error {
-	err := renderPromise(g.r, promiseParams{
+	err := g.r.Render(promiseParams{
 		G:      g,
 		Node:   n,
 		Fields: n.codeOrderFields(),
@@ -971,7 +1009,7 @@ func (g *generator) defineStructPromise(n *node) error {
 			if err != nil {
 				return fmt.Errorf("promise group %s.%s: %v", n.shortDisplayName(), f.Name, err)
 			}
-			err = renderPromiseGroup(g.r, promiseGroupParams{
+			err = g.r.Render(promiseGroupParams{
 				G:     g,
 				Node:  n,
 				Field: f,
@@ -1010,9 +1048,9 @@ func (g *generator) definePromiseField(n *node, f field) error {
 				}
 			}
 		}
-		return renderPromiseFieldStruct(g.r, params)
+		return g.r.Render(params)
 	case schema.Type_Which_anyPointer:
-		return renderPromiseFieldAnyPointer(g.r, promiseFieldAnyPointerParams{
+		return g.r.Render(promiseFieldAnyPointerParams{
 			G:     g,
 			Node:  n,
 			Field: f,
@@ -1022,7 +1060,7 @@ func (g *generator) definePromiseField(n *node, f field) error {
 		if err != nil {
 			return err
 		}
-		return renderPromiseFieldInterface(g.r, promiseFieldInterfaceParams{
+		return g.r.Render(promiseFieldInterfaceParams{
 			G:         g,
 			Node:      n,
 			Field:     f,
@@ -1039,7 +1077,7 @@ func (g *generator) defineInterface(n *node) error {
 		return fmt.Errorf("building method set of interface %s: %v", n, err)
 	}
 	nann, _ := n.Annotations()
-	err = renderInterfaceClient(g.r, interfaceClientParams{
+	err = g.r.Render(interfaceClientParams{
 		G:           g,
 		Node:        n,
 		Annotations: parseAnnotations(nann),
@@ -1048,7 +1086,7 @@ func (g *generator) defineInterface(n *node) error {
 	if err != nil {
 		return fmt.Errorf("interface client %s: %v", n, err)
 	}
-	err = renderInterfaceServer(g.r, interfaceServerParams{
+	err = g.r.Render(interfaceServerParams{
 		G:           g,
 		Node:        n,
 		Annotations: parseAnnotations(nann),
