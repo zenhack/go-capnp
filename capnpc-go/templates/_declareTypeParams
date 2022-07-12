@@ -1,8 +1,8 @@
 {{- if $.Node.IsGeneric -}}
 [
-{{- range $index, $param = $.Node.AllTypeParams -}}
+{{- range $index, $param := $.Node.AllTypeParams -}}
 {{- if $index -}}, {{- end -}}
-{{$param}} {{$.G.Capnp}}.TypeParam[{{$param}}]
+{{$param}} {{$.G.Capnp}}.TypeParam
 {{- end -}}
 ]
 {{- end -}}

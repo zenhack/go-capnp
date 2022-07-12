@@ -11,7 +11,7 @@ import (
 	context "context"
 )
 
-type PingPong struct{ Client *capnp.Client }
+type PingPong struct{ Client capnp.Client }
 
 // PingPong_TypeID is the unique identifier for the type PingPong.
 const PingPong_TypeID = 0xf004c474c2f8ee7a
@@ -47,8 +47,8 @@ func (c PingPong) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c PingPong) DecodeFromPtr(p capnp.Ptr) PingPong {
-	return PingPong{Client: c.Client.DecodeFromPtr(p)}
+func (c *PingPong) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A PingPong_Server is a PingPong with a local implementation.
@@ -105,6 +105,15 @@ func (c PingPong_echoNum) Args() PingPong_echoNum_Params {
 func (c PingPong_echoNum) AllocResults() (PingPong_echoNum_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 8, PointerCount: 0})
 	return PingPong_echoNum_Results{Struct: r}, err
+}
+
+// PingPong_List is a list of PingPong.
+type PingPong_List = capnp.CapList[PingPong]
+
+// NewPingPong creates a new list of PingPong.
+func NewPingPong_List(s *capnp.Segment, sz int32) (PingPong_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[PingPong](l), err
 }
 
 type PingPong_echoNum_Params struct{ capnp.Struct }
@@ -207,7 +216,7 @@ func (p PingPong_echoNum_Results_Future) Struct() (PingPong_echoNum_Results, err
 	return PingPong_echoNum_Results{s}, err
 }
 
-type StreamTest struct{ Client *capnp.Client }
+type StreamTest struct{ Client capnp.Client }
 
 // StreamTest_TypeID is the unique identifier for the type StreamTest.
 const StreamTest_TypeID = 0xbb3ca85b01eea465
@@ -243,8 +252,8 @@ func (c StreamTest) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c StreamTest) DecodeFromPtr(p capnp.Ptr) StreamTest {
-	return StreamTest{Client: c.Client.DecodeFromPtr(p)}
+func (c *StreamTest) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A StreamTest_Server is a StreamTest with a local implementation.
@@ -303,6 +312,15 @@ func (c StreamTest_push) AllocResults() (stream.StreamResult, error) {
 	return stream.StreamResult{Struct: r}, err
 }
 
+// StreamTest_List is a list of StreamTest.
+type StreamTest_List = capnp.CapList[StreamTest]
+
+// NewStreamTest creates a new list of StreamTest.
+func NewStreamTest_List(s *capnp.Segment, sz int32) (StreamTest_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[StreamTest](l), err
+}
+
 type StreamTest_push_Params struct{ capnp.Struct }
 
 // StreamTest_push_Params_TypeID is the unique identifier for the type StreamTest_push_Params.
@@ -358,7 +376,7 @@ func (p StreamTest_push_Params_Future) Struct() (StreamTest_push_Params, error) 
 	return StreamTest_push_Params{s}, err
 }
 
-type CapArgsTest struct{ Client *capnp.Client }
+type CapArgsTest struct{ Client capnp.Client }
 
 // CapArgsTest_TypeID is the unique identifier for the type CapArgsTest.
 const CapArgsTest_TypeID = 0xb86bce7f916a10cc
@@ -410,8 +428,8 @@ func (c CapArgsTest) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c CapArgsTest) DecodeFromPtr(p capnp.Ptr) CapArgsTest {
-	return CapArgsTest{Client: c.Client.DecodeFromPtr(p)}
+func (c *CapArgsTest) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A CapArgsTest_Server is a CapArgsTest with a local implementation.
@@ -501,6 +519,15 @@ func (c CapArgsTest_self) AllocResults() (CapArgsTest_self_Results, error) {
 	return CapArgsTest_self_Results{Struct: r}, err
 }
 
+// CapArgsTest_List is a list of CapArgsTest.
+type CapArgsTest_List = capnp.CapList[CapArgsTest]
+
+// NewCapArgsTest creates a new list of CapArgsTest.
+func NewCapArgsTest_List(s *capnp.Segment, sz int32) (CapArgsTest_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[CapArgsTest](l), err
+}
+
 type CapArgsTest_call_Params struct{ capnp.Struct }
 
 // CapArgsTest_call_Params_TypeID is the unique identifier for the type CapArgsTest_call_Params.
@@ -526,7 +553,7 @@ func (s CapArgsTest_call_Params) String() string {
 	return str
 }
 
-func (s CapArgsTest_call_Params) Cap() *capnp.Client {
+func (s CapArgsTest_call_Params) Cap() capnp.Client {
 	p, _ := s.Struct.Ptr(0)
 	return p.Interface().Client()
 }
@@ -535,7 +562,7 @@ func (s CapArgsTest_call_Params) HasCap() bool {
 	return s.Struct.HasPtr(0)
 }
 
-func (s CapArgsTest_call_Params) SetCap(c *capnp.Client) error {
+func (s CapArgsTest_call_Params) SetCap(c capnp.Client) error {
 	if !c.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
 	}

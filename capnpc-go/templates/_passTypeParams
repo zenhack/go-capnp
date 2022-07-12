@@ -1,6 +1,6 @@
 {{- if . -}}
 [
-{{- range $index, $param = . -}}
+{{- range $index, $param := . -}}
 	{{- if $index -}}, {{- end -}}
 	{{- $param -}}
 {{- end -}}

@@ -987,10 +987,10 @@ func (l Float64List) String() string {
 }
 
 // A list of some Cap'n Proto enum type T.
-type EnumList[T interface{ ~uint16 }] UInt16List
+type EnumList[T ~uint16] UInt16List
 
 // NewEnumList creates a new list of T, preferring placement in s.
-func NewEnumList[T interface{ ~uint16 }](s *Segment, n int32) (EnumList[T], error) {
+func NewEnumList[T ~uint16](s *Segment, n int32) (EnumList[T], error) {
 	l, err := NewUInt16List(s, n)
 	return EnumList[T](l), err
 }
@@ -1037,6 +1037,23 @@ func (s StructList[T]) String() string {
 	return buf.String()
 }
 
+type CapList[T ~struct{ Client Client }] PointerList
+
+func (c CapList[T]) At(i int) (T, error) {
+	ptr, err := PointerList(c).At(i)
+	if err != nil {
+		return T{}, err
+	}
+	return T{Client: ptr.Interface().Client()}, nil
+}
+
+func (c CapList[T]) Set(i int, v T) error {
+	pl := PointerList(c)
+	seg := pl.List.Segment()
+	capId := seg.Message().AddCap(struct{ Client Client }(v).Client)
+	return pl.Set(i, NewInterface(seg, capId).ToPtr())
+}
+
 type listFlags uint8
 
 const (
@@ -1045,6 +1062,6 @@ const (
 )
 
 func (l List) EncodeAsPtr(*Segment) Ptr { return l.ToPtr() }
-func (l List) DecodeFromPtr(p Ptr) List { return p.List() }
+func (l *List) DecodeFromPtr(p Ptr)     { *l = p.List() }
 
-var _ TypeParam[List] = List{}
+var _ TypeParam = &List{}

@@ -2156,12 +2156,12 @@ func (s Z) SetEcho(v Echo) error {
 	return s.Struct.SetPtr(0, in.ToPtr())
 }
 
-func (s Z) Echoes() (capnp.PointerList, error) {
+func (s Z) Echoes() (Echo_List, error) {
 	if s.Struct.Uint16(0) != 44 {
 		panic("Which() != echoes")
 	}
 	p, err := s.Struct.Ptr(0)
-	return capnp.PointerList{List: p.List()}, err
+	return Echo_List{List: p.List()}, err
 }
 
 func (s Z) HasEchoes() bool {
@@ -2171,18 +2171,18 @@ func (s Z) HasEchoes() bool {
 	return s.Struct.HasPtr(0)
 }
 
-func (s Z) SetEchoes(v capnp.PointerList) error {
+func (s Z) SetEchoes(v Echo_List) error {
 	s.Struct.SetUint16(0, 44)
 	return s.Struct.SetPtr(0, v.List.ToPtr())
 }
 
 // NewEchoes sets the echoes field to a newly
-// allocated capnp.PointerList, preferring placement in s's segment.
-func (s Z) NewEchoes(n int32) (capnp.PointerList, error) {
+// allocated Echo_List, preferring placement in s's segment.
+func (s Z) NewEchoes(n int32) (Echo_List, error) {
 	s.Struct.SetUint16(0, 44)
-	l, err := capnp.NewPointerList(s.Struct.Segment(), n)
+	l, err := NewEcho_List(s.Struct.Segment(), n)
 	if err != nil {
-		return capnp.PointerList{}, err
+		return Echo_List{}, err
 	}
 	err = s.Struct.SetPtr(0, l.List.ToPtr())
 	return l, err
@@ -2245,7 +2245,7 @@ func (s Z) SetAnyList(v capnp.Ptr) error {
 	return s.Struct.SetPtr(0, v)
 }
 
-func (s Z) AnyCapability() *capnp.Client {
+func (s Z) AnyCapability() capnp.Client {
 	if s.Struct.Uint16(0) != 48 {
 		panic("Which() != anyCapability")
 	}
@@ -2260,7 +2260,7 @@ func (s Z) HasAnyCapability() bool {
 	return s.Struct.HasPtr(0)
 }
 
-func (s Z) SetAnyCapability(c *capnp.Client) error {
+func (s Z) SetAnyCapability(c capnp.Client) error {
 	s.Struct.SetUint16(0, 48)
 	if !c.IsValid() {
 		return s.Struct.SetPtr(0, capnp.Ptr{})
@@ -4318,7 +4318,7 @@ func (p ListStructCapn_Future) Struct() (ListStructCapn, error) {
 	return ListStructCapn{s}, err
 }
 
-type Echo struct{ Client *capnp.Client }
+type Echo struct{ Client capnp.Client }
 
 // Echo_TypeID is the unique identifier for the type Echo.
 const Echo_TypeID = 0x8e5322c1e9282534
@@ -4354,8 +4354,8 @@ func (c Echo) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c Echo) DecodeFromPtr(p capnp.Ptr) Echo {
-	return Echo{Client: c.Client.DecodeFromPtr(p)}
+func (c *Echo) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A Echo_Server is a Echo with a local implementation.
@@ -4412,6 +4412,15 @@ func (c Echo_echo) Args() Echo_echo_Params {
 func (c Echo_echo) AllocResults() (Echo_echo_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 1})
 	return Echo_echo_Results{Struct: r}, err
+}
+
+// Echo_List is a list of Echo.
+type Echo_List = capnp.CapList[Echo]
+
+// NewEcho creates a new list of Echo.
+func NewEcho_List(s *capnp.Segment, sz int32) (Echo_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[Echo](l), err
 }
 
 type Echo_echo_Params struct{ capnp.Struct }
@@ -4898,7 +4907,7 @@ func (p StackingB_Future) Struct() (StackingB, error) {
 	return StackingB{s}, err
 }
 
-type CallSequence struct{ Client *capnp.Client }
+type CallSequence struct{ Client capnp.Client }
 
 // CallSequence_TypeID is the unique identifier for the type CallSequence.
 const CallSequence_TypeID = 0xabaedf5f7817c820
@@ -4934,8 +4943,8 @@ func (c CallSequence) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c CallSequence) DecodeFromPtr(p capnp.Ptr) CallSequence {
-	return CallSequence{Client: c.Client.DecodeFromPtr(p)}
+func (c *CallSequence) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A CallSequence_Server is a CallSequence with a local implementation.
@@ -4992,6 +5001,15 @@ func (c CallSequence_getNumber) Args() CallSequence_getNumber_Params {
 func (c CallSequence_getNumber) AllocResults() (CallSequence_getNumber_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 8, PointerCount: 0})
 	return CallSequence_getNumber_Results{Struct: r}, err
+}
+
+// CallSequence_List is a list of CallSequence.
+type CallSequence_List = capnp.CapList[CallSequence]
+
+// NewCallSequence creates a new list of CallSequence.
+func NewCallSequence_List(s *capnp.Segment, sz int32) (CallSequence_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[CallSequence](l), err
 }
 
 type CallSequence_getNumber_Params struct{ capnp.Struct }
@@ -5086,7 +5104,7 @@ func (p CallSequence_getNumber_Results_Future) Struct() (CallSequence_getNumber_
 	return CallSequence_getNumber_Results{s}, err
 }
 
-type Pipeliner struct{ Client *capnp.Client }
+type Pipeliner struct{ Client capnp.Client }
 
 // Pipeliner_TypeID is the unique identifier for the type Pipeliner.
 const Pipeliner_TypeID = 0xd6514008f0f84ebc
@@ -5138,8 +5156,8 @@ func (c Pipeliner) EncodeAsPtr(s *capnp.Segment) capnp.Ptr {
 	return c.Client.EncodeAsPtr(s)
 }
 
-func (c Pipeliner) DecodeFromPtr(p capnp.Ptr) Pipeliner {
-	return Pipeliner{Client: c.Client.DecodeFromPtr(p)}
+func (c *Pipeliner) DecodeFromPtr(p capnp.Ptr) {
+	c.Client.DecodeFromPtr(p)
 }
 
 // A Pipeliner_Server is a Pipeliner with a local implementation.
@@ -5210,6 +5228,15 @@ func (c Pipeliner_newPipeliner) Args() Pipeliner_newPipeliner_Params {
 func (c Pipeliner_newPipeliner) AllocResults() (Pipeliner_newPipeliner_Results, error) {
 	r, err := c.Call.AllocResults(capnp.ObjectSize{DataSize: 0, PointerCount: 2})
 	return Pipeliner_newPipeliner_Results{Struct: r}, err
+}
+
+// Pipeliner_List is a list of Pipeliner.
+type Pipeliner_List = capnp.CapList[Pipeliner]
+
+// NewPipeliner creates a new list of Pipeliner.
+func NewPipeliner_List(s *capnp.Segment, sz int32) (Pipeliner_List, error) {
+	l, err := capnp.NewPointerList(s, sz)
+	return capnp.CapList[Pipeliner](l), err
 }
 
 type Pipeliner_newPipeliner_Params struct{ capnp.Struct }
